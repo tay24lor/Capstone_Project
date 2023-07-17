@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="530.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.software_1_project.ModifyProductScreenController">
+    <children>
+        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ffffff72" height="502.0" layoutX="19.0" layoutY="13.0" stroke="BLACK" strokeType="INSIDE" width="866.0" />
+        <Label layoutX="46.0" layoutY="43.0" text="Modify Product">
+            <font>
+                <Font name="System Bold" size="12.0" />
+            </font>
+        </Label>
+        <Button layoutX="783.0" layoutY="482.0" mnemonicParsing="false" onAction="#onClick2Cancel" text="Cancel" />
+        <TextField layoutX="118.0" layoutY="114.0" prefHeight="26.0" prefWidth="186.0" />
+        <TextField layoutX="119.0" layoutY="170.0" prefHeight="26.0" prefWidth="185.0" />
+        <TextField layoutX="120.0" layoutY="226.0" prefHeight="26.0" prefWidth="103.0" />
+        <TextField layoutX="121.0" layoutY="282.0" prefHeight="26.0" prefWidth="103.0" />
+        <TextField layoutX="121.0" layoutY="340.0" prefHeight="26.0" prefWidth="103.0" />
+        <TextField layoutX="305.0" layoutY="339.0" prefHeight="26.0" prefWidth="103.0" />
+        <Label layoutX="54.0" layoutY="118.0" text="ID" />
+        <Label layoutX="54.0" layoutY="174.0" text="Name" />
+        <Label layoutX="54.0" layoutY="229.0" text="Inv" />
+        <Label layoutX="54.0" layoutY="286.0" text="Price" />
+        <Label layoutX="54.0" layoutY="344.0" text="Max" />
+        <Label layoutX="268.0" layoutY="343.0" text="Min" />
+        <TableView layoutX="446.0" layoutY="52.0" prefHeight="165.0" prefWidth="410.0">
+            <columns>
+                <TableColumn prefWidth="67.19998168945312" text="Part ID" />
+                <TableColumn prefWidth="83.20004272460938" text="Part Name" />
+                <TableColumn prefWidth="95.199951171875" text="Inventory Level" />
+                <TableColumn prefWidth="134.0" text="Price/Cost per Unit" />
+            </columns>
+        </TableView>
+        <Button layoutX="752.0" layoutY="228.0" mnemonicParsing="false" text="Add" />
+        <TableView layoutX="446.0" layoutY="278.0" prefHeight="165.0" prefWidth="410.0">
+            <columns>
+                <TableColumn prefWidth="67.19998168945312" text="Part ID" />
+                <TableColumn prefWidth="83.20004272460938" text="Part Name" />
+                <TableColumn prefWidth="95.199951171875" text="Inventory Level" />
+                <TableColumn prefWidth="134.0" text="Price/Cost per Unit" />
+            </columns>
+        </TableView>
+        <Button layoutX="682.0" layoutY="482.0" mnemonicParsing="false" onAction="#onClick2Cancel" text="Save" />
+        <Button layoutX="682.0" layoutY="450.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="152.0" text="Remove Associated Part" />
+    </children>
+</AnchorPane>

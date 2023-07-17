@@ -33,4 +33,22 @@ public class MainScreenController {
         stage.setScene(scene);
         stage.show();
     }
+
+    public void onClick2ModPart(ActionEvent actionEvent) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("ModifyPartScreen.fxml"));
+        Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root, 650, 600);
+        stage.setTitle("Add Part");
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public void onClick2ModifyProduct(ActionEvent actionEvent) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("ModifyProductScreen.fxml"));
+        Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root, 900, 530);
+        stage.setTitle("Add Part");
+        stage.setScene(scene);
+        stage.show();
+    }
 }

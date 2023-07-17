@@ -46,10 +46,10 @@
             <Font name="System Bold Italic" size="12.0" />
          </font>
       </Label>
-      <Button layoutX="272.0" layoutY="291.0" mnemonicParsing="false" text="Modify" />
+      <Button layoutX="272.0" layoutY="291.0" mnemonicParsing="false" onAction="#onClick2ModPart" text="Modify" />
       <Button layoutX="334.0" layoutY="291.0" mnemonicParsing="false" text="Delete" />
       <Button layoutX="610.0" layoutY="291.0" mnemonicParsing="false" onAction="#onClick2AddProduct" text="Add" />
-      <Button layoutX="672.0" layoutY="291.0" mnemonicParsing="false" text="Modify" />
+      <Button layoutX="672.0" layoutY="291.0" mnemonicParsing="false" onAction="#onClick2ModifyProduct" text="Modify" />
       <Button layoutX="734.0" layoutY="291.0" mnemonicParsing="false" text="Delete" />
    </children>
 </AnchorPane>
