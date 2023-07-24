@@ -31,12 +31,13 @@ public class AddPartScreenController implements Initializable {
     public TextField machineIDField;
     public ToggleGroup InOrOut;
 
-    private InHousePart part = new InHousePart(0, "",0.00,0,0,0);
+    private final InHousePart part;
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-
+    public AddPartScreenController() {
+        part = new InHousePart(0, "",0.00,0,0,0, "");
     }
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {}
     public void onClick2Exit(ActionEvent actionEvent) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
         Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
@@ -45,19 +46,16 @@ public class AddPartScreenController implements Initializable {
         stage.setScene(scene);
         stage.show();
     }
-
     public void onClick2OutSrc() {
         makeIDLabel.setText("Company Name");
     }
-
     public void onClick2InHouse() {
         makeIDLabel.setText("Machine ID");
     }
-
     public void onClick2Save(ActionEvent actionEvent) throws IOException {
         part.setId(1); part.setName(nameField.getText()); part.setPrice(Double.parseDouble(priceField.getText()));
         part.setStock(Integer.parseInt(stockField.getText())); part.setMin(Integer.parseInt(minField.getText()));
-        part.setMax(Integer.parseInt(maxField.getText()));
+        part.setMax(Integer.parseInt(maxField.getText())); part.setMachineCode(machineIDField.getText());
         MainScreenController.passData(part);
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
         Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
