@@ -11,7 +11,7 @@
             <Font name="System Bold" size="13.0" />
          </font>
       </Label>
-      <RadioButton fx:id="inHouseButton" layoutX="226.0" layoutY="61.0" mnemonicParsing="false" onAction="#onClick2InHouse" selected="true" text="In-House">
+      <RadioButton fx:id="inHouseButton" layoutX="226.0" layoutY="61.0" mnemonicParsing="false" onAction="#onClick2InHouse" selected="true" text="In-House" toggleGroup="$InOrOut">
          <toggleGroup>
             <ToggleGroup fx:id="InOrOut" />
          </toggleGroup></RadioButton>

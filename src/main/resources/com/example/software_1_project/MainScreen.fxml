@@ -59,7 +59,8 @@
          <font>
             <Font name="System Italic" size="12.0" />
          </font></Label>
-      <TextField fx:id="partSearch" layoutX="248.0" layoutY="31.0" onAction="#displayText" promptText="Search by ID or name..." />
-      <TextField layoutX="648.0" layoutY="31.0" promptText="Search by ID or name..." />
+      <TextField fx:id="partSearch" layoutX="248.0" layoutY="31.0" onMouseClicked="#displayPartSearch" promptText="Search by ID or name..." />
+      <TextField layoutX="610.0" layoutY="31.0" promptText="Search by ID or name..." />
+      <Button layoutX="759.0" layoutY="31.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="38.0" text="&gt;&gt;" />
    </children>
 </AnchorPane>

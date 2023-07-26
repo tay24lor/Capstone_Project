@@ -70,7 +70,7 @@ public class ModifyPartScreenController implements Initializable {
     public void onClick2Mod(ActionEvent actionEvent) throws IOException {
         modPart.setName(nameField.getText()); modPart.setPrice(Double.parseDouble(priceField.getText()));
         modPart.setStock(Integer.parseInt(invField.getText())); modPart.setMin(Integer.parseInt(minField.getText()));
-        modPart.setMax(Integer.parseInt(maxField.getText())); modPart.setMachineCode(machineIDField.getText());
+        modPart.setMax(Integer.parseInt(maxField.getText())); modPart.setMachineCode(Integer.parseInt(machineIDField.getText()));
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
         Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
         Scene scene = new Scene(root, 820, 400);
