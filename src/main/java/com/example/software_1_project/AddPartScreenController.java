@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import model.InHousePart;
 import model.Inventory;
 import model.OutSourcedPart;
+
 import java.io.IOException;
 import java.util.Objects;
 
@@ -48,9 +49,8 @@ public class AddPartScreenController {
         makeIDLabel.setText("Machine ID");
     }
     public void onClick2Save(ActionEvent actionEvent) throws IOException {
-
-        if (inHouseButton.isSelected()) setStats((InHousePart) null);
-        else if (outsourcedButton.isSelected()) setStats((OutSourcedPart) null);
+        if (inHouseButton.isSelected()) setIHStats();
+        else if (outsourcedButton.isSelected()) setOSStats();
 
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
         Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
@@ -60,15 +60,15 @@ public class AddPartScreenController {
         stage.show();
     }
 
-    private void setStats(InHousePart part) {
-        part = new InHousePart(0, "", 0.00, 0, 0, 0, 0);
+    private void setIHStats() {
+        InHousePart part = new InHousePart(0, "", 0.00, 0, 0, 0);
         part.setId(1); part.setName(nameField.getText()); part.setPrice(Double.parseDouble(priceField.getText()));
         part.setStock(Integer.parseInt(stockField.getText())); part.setMin(Integer.parseInt(minField.getText()));
         part.setMax(Integer.parseInt(maxField.getText())); part.setMachineCode(Integer.parseInt(machineIDField.getText()));
         Inventory.addPart(part);
     }
-    private void setStats(OutSourcedPart part) {
-        part = new OutSourcedPart(0, "", 0.00, 0, 0, 0, "");
+    private void setOSStats() {
+        OutSourcedPart part = new OutSourcedPart(0, "", 0.00, 0, 0, 0);
         part.setId(1); part.setName(nameField.getText()); part.setPrice(Double.parseDouble(priceField.getText()));
         part.setStock(Integer.parseInt(stockField.getText())); part.setMin(Integer.parseInt(minField.getText()));
         part.setMax(Integer.parseInt(maxField.getText())); part.setCompanyName(machineIDField.getText());
