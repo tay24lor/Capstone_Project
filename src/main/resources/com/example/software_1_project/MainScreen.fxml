@@ -9,11 +9,11 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="820.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.software_1_project.MainScreenController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="883.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.software_1_project.MainScreenController">
    <children>
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1f93ff11" height="262.0" layoutX="422.0" layoutY="68.0" stroke="BLACK" strokeType="INSIDE" width="376.0" />
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1f93ff11" height="262.0" layoutX="22.0" layoutY="68.0" stroke="BLACK" strokeType="INSIDE" width="376.0" />
-      <TableView fx:id="partTable" layoutX="235.0" layoutY="-19.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="350.0" translateX="-200.0" translateY="100.0">
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1f93ff11" height="262.0" layoutX="448.0" layoutY="69.0" stroke="BLACK" strokeType="INSIDE" width="427.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1f93ff11" height="262.0" layoutX="9.0" layoutY="69.0" stroke="BLACK" strokeType="INSIDE" width="427.0" />
+      <TableView fx:id="partTable" layoutX="216.0" layoutY="-18.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="413.0" translateX="-200.0" translateY="100.0">
         <columns>
           <TableColumn fx:id="partIDCol" prefWidth="53.199967205524445" text="Part ID" />
           <TableColumn fx:id="partNameCol" prefWidth="71.59997177124023" text="Part Name" />
@@ -21,16 +21,16 @@
           <TableColumn fx:id="priceCol" prefWidth="124.79998779296875" text="Price/ Cost per Unit" />
         </columns>
       </TableView>
-      <TableView layoutX="235.0" layoutY="181.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="350.0" translateX="200.0" translateY="-100.0">
+      <TableView fx:id="prodTable" layoutX="255.0" layoutY="182.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="413.0" translateX="200.0" translateY="-100.0">
          <columns>
-            <TableColumn prefWidth="53.199967205524445" text="Part ID" />
-            <TableColumn prefWidth="71.59997177124023" text="Part Name" />
-            <TableColumn prefWidth="99.20002746582031" text="Inventory Level" />
-            <TableColumn prefWidth="124.79998779296875" text="Price/ Cost per Unit" />
+            <TableColumn fx:id="prodIDCol" prefWidth="66.0" text="Product ID" />
+            <TableColumn fx:id="prodNameCol" prefWidth="92.0" text="Product Name" />
+            <TableColumn fx:id="prodInvCol" prefWidth="99.0" text="Inventory Level" />
+            <TableColumn fx:id="prodCostCol" prefWidth="126.0" text="Price/ Cost per Unit" />
          </columns>
       </TableView>
-      <Button layoutX="270.0" layoutY="381.0" mnemonicParsing="false" onAction="#onClick2AddPart" text="Add" translateX="-60.0" translateY="-90.0" />
-     <Button layoutX="397.0" layoutY="404.0" onAction="#onHelloButtonClick" text="Exit" translateX="350.0" translateY="-50.0">
+      <Button layoutX="308.0" layoutY="381.0" mnemonicParsing="false" onAction="#onClick2AddPart" text="Add" translateX="-60.0" translateY="-90.0" />
+     <Button layoutX="462.0" layoutY="404.0" onAction="#onHelloButtonClick" text="Exit" translateX="350.0" translateY="-50.0">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
@@ -40,7 +40,7 @@
             <Font name="System Bold" size="12.0" />
          </font>
       </Label>
-      <Label layoutX="435.0" layoutY="50.0" text="Products">
+      <Label layoutX="455.0" layoutY="50.0" text="Products">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
@@ -50,17 +50,17 @@
             <Font name="System Bold Italic" size="12.0" />
          </font>
       </Label>
-      <Button layoutX="272.0" layoutY="291.0" mnemonicParsing="false" onAction="#onClick2ModPart" text="Modify" />
-      <Button layoutX="334.0" layoutY="291.0" mnemonicParsing="false" onAction="#onClick2Delete" text="Delete" />
-      <Button layoutX="610.0" layoutY="291.0" mnemonicParsing="false" onAction="#onClick2AddProduct" text="Add" />
-      <Button layoutX="672.0" layoutY="291.0" mnemonicParsing="false" onAction="#onClick2ModifyProduct" text="Modify" />
-      <Button layoutX="734.0" layoutY="291.0" mnemonicParsing="false" text="Delete" />
+      <Button layoutX="310.0" layoutY="291.0" mnemonicParsing="false" onAction="#onClick2ModPart" text="Modify" />
+      <Button layoutX="372.0" layoutY="291.0" mnemonicParsing="false" onAction="#onClick2Delete" text="Delete" />
+      <Button layoutX="682.0" layoutY="291.0" mnemonicParsing="false" onAction="#onClick2AddProduct" text="Add" />
+      <Button layoutX="744.0" layoutY="291.0" mnemonicParsing="false" onAction="#onClick2ModifyProduct" text="Modify" />
+      <Button layoutX="806.0" layoutY="291.0" mnemonicParsing="false" text="Delete" />
       <Label fx:id="warningLabel" layoutX="28.0" layoutY="358.0" textFill="red">
          <font>
             <Font name="System Italic" size="12.0" />
          </font></Label>
-      <TextField fx:id="partSearch" layoutX="248.0" layoutY="31.0" onMouseClicked="#displayPartSearch" promptText="Search by ID or name..." />
-      <TextField layoutX="610.0" layoutY="31.0" promptText="Search by ID or name..." />
-      <Button layoutX="759.0" layoutY="31.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="38.0" text="&gt;&gt;" />
+      <TextField fx:id="partSearch" layoutX="286.0" layoutY="31.0" onMouseClicked="#displayPartSearch" promptText="Search by ID or name..." />
+      <TextField layoutX="682.0" layoutY="31.0" promptText="Search by ID or name..." />
+      <Button layoutX="831.0" layoutY="31.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="38.0" text="&gt;&gt;" />
    </children>
 </AnchorPane>

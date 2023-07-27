@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import model.InHousePart;
 import model.Inventory;
 import model.OutSourcedPart;
+import model.Part;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -30,23 +31,21 @@ public class AddPartScreenController {
     public TextField machineIDField;
     public ToggleGroup InOrOut;
 
-    public AddPartScreenController() {
+    public AddPartScreenController() {}
 
-    }
-
-    public void onClick2Exit(ActionEvent actionEvent) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
-        Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
-        Scene scene = new Scene(root, 820, 400);
-        stage.setTitle("Hello!");
-        stage.setScene(scene);
-        stage.show();
-    }
     public void onClick2OutSrc() {
         makeIDLabel.setText("Company Name");
     }
     public void onClick2InHouse() {
         makeIDLabel.setText("Machine ID");
+    }
+    public void onClick2Exit(ActionEvent actionEvent) throws IOException {
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
+        Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root, 883, 400);
+        stage.setTitle("Hello!");
+        stage.setScene(scene);
+        stage.show();
     }
     public void onClick2Save(ActionEvent actionEvent) throws IOException {
         if (inHouseButton.isSelected()) setIHStats();
@@ -54,7 +53,7 @@ public class AddPartScreenController {
 
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
         Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
-        Scene scene = new Scene(root, 820, 400);
+        Scene scene = new Scene(root, 883, 400);
         stage.setTitle("Hello!");
         stage.setScene(scene);
         stage.show();
@@ -62,16 +61,29 @@ public class AddPartScreenController {
 
     private void setIHStats() {
         InHousePart part = new InHousePart(0, "", 0.00, 0, 0, 0);
-        part.setId(1); part.setName(nameField.getText()); part.setPrice(Double.parseDouble(priceField.getText()));
+        part.setId(0);
+        part.setName(nameField.getText()); part.setPrice(Double.parseDouble(priceField.getText()));
         part.setStock(Integer.parseInt(stockField.getText())); part.setMin(Integer.parseInt(minField.getText()));
         part.setMax(Integer.parseInt(maxField.getText())); part.setMachineCode(Integer.parseInt(machineIDField.getText()));
+        generateID(part);
         Inventory.addPart(part);
     }
     private void setOSStats() {
         OutSourcedPart part = new OutSourcedPart(0, "", 0.00, 0, 0, 0);
-        part.setId(1); part.setName(nameField.getText()); part.setPrice(Double.parseDouble(priceField.getText()));
+        part.setId(0);
+        part.setName(nameField.getText()); part.setPrice(Double.parseDouble(priceField.getText()));
         part.setStock(Integer.parseInt(stockField.getText())); part.setMin(Integer.parseInt(minField.getText()));
         part.setMax(Integer.parseInt(maxField.getText())); part.setCompanyName(machineIDField.getText());
+        generateID(part);
         Inventory.addPart(part);
+    }
+
+    private void generateID(Part part) {
+        int id = 0;
+        for (Part p : Inventory.getAllParts()) {
+            id = p.getId();
+        }
+        id++;
+        part.setId(id);
     }
 }

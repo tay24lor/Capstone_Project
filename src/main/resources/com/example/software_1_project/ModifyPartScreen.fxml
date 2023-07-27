@@ -21,7 +21,7 @@
         <TextField fx:id="priceField" layoutX="241.0" layoutY="287.0" />
         <TextField fx:id="minField" layoutX="465.0" layoutY="326.0" />
         <TextField fx:id="maxField" layoutX="241.0" layoutY="326.0" />
-        <TextField fx:id="machineIDField" layoutX="241.0" layoutY="363.0" />
+        <TextField fx:id="machineOrCompanyField" layoutX="241.0" layoutY="363.0" />
         <Label layoutX="108.0" layoutY="164.0" text="ID">
             <font>
                 <Font name="System Bold" size="12.0" />

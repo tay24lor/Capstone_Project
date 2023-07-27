@@ -18,6 +18,8 @@ import javafx.stage.Stage;
 import model.InHousePart;
 import model.Inventory;
 import model.Part;
+import model.Product;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
@@ -25,26 +27,45 @@ import java.util.ResourceBundle;
 
 public class MainScreenController implements Initializable {
     public TableView<Part> partTable = new TableView<>();
+    public TextField partSearch;
     public TableColumn<Part, Integer> partIDCol;
     public TableColumn<Part, String> partNameCol;
     public TableColumn<Part, Integer> invLevelCol;
     public TableColumn<Part, Double> priceCol;
+    public TableView<Product> prodTable = new TableView<>();
+    public TableColumn<Product, Integer> prodIDCol;
+    public TableColumn<Product, String> prodNameCol;
+    public TableColumn<Product, Integer> prodInvCol;
+    public TableColumn<Product, Double> prodCostCol;
     public Label warningLabel;
-    public TextField partSearch;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         if (!(Inventory.getAllParts() == null)) {
-            System.out.println(Inventory.getAllParts().size());
-
-            partIDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
-            partNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
-            invLevelCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
-            priceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
-
-            partTable.setItems(Inventory.getAllParts());
+            generatePartTable();
+        }
+        if (!(Inventory.getAllProducts() == null)) {
+            generateProductTable();
         }
     }
+
+    private void generatePartTable() {
+        partIDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
+        partNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+        invLevelCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
+        priceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
+
+        partTable.setItems(Inventory.getAllParts());
+    }
+    private void generateProductTable() {
+        prodIDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
+        prodNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+        prodInvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
+        prodCostCol.setCellValueFactory(new PropertyValueFactory<>("price"));
+
+        prodTable.setItems(Inventory.getAllProducts());
+    }
+
     @FXML
     protected void onHelloButtonClick() {
         System.exit(0);
@@ -66,7 +87,7 @@ public class MainScreenController implements Initializable {
         stage.show();
     }
     public void onClick2ModPart(ActionEvent actionEvent) throws IOException {
-        InHousePart selectedItem = (InHousePart) partTable.getSelectionModel().getSelectedItem();
+        Part selectedItem = partTable.getSelectionModel().getSelectedItem();
         if (checkSelected(selectedItem)) {   // Check if no item is selected before sending data to modify screen
             ModifyPartScreenController.sendData(selectedItem);
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("ModifyPartScreen.fxml")));

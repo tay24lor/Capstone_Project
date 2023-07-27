@@ -18,12 +18,12 @@
          </font>
       </Label>
       <Button layoutX="783.0" layoutY="482.0" mnemonicParsing="false" onAction="#onClick2Cancel" text="Cancel" />
-      <TextField layoutX="118.0" layoutY="114.0" prefHeight="26.0" prefWidth="186.0" />
-      <TextField layoutX="119.0" layoutY="170.0" prefHeight="26.0" prefWidth="185.0" />
-      <TextField layoutX="120.0" layoutY="226.0" prefHeight="26.0" prefWidth="103.0" />
-      <TextField layoutX="121.0" layoutY="282.0" prefHeight="26.0" prefWidth="103.0" />
-      <TextField layoutX="121.0" layoutY="340.0" prefHeight="26.0" prefWidth="103.0" />
-      <TextField layoutX="305.0" layoutY="339.0" prefHeight="26.0" prefWidth="103.0" />
+      <TextField fx:id="prodIDField" editable="false" layoutX="118.0" layoutY="114.0" prefHeight="26.0" prefWidth="186.0" promptText="ID is auto-generated..." />
+      <TextField fx:id="prodNameField" layoutX="119.0" layoutY="170.0" prefHeight="26.0" prefWidth="185.0" />
+      <TextField fx:id="prodStockField" layoutX="120.0" layoutY="226.0" prefHeight="26.0" prefWidth="103.0" />
+      <TextField fx:id="prodPriceField" layoutX="121.0" layoutY="282.0" prefHeight="26.0" prefWidth="103.0" />
+      <TextField fx:id="prodMaxField" layoutX="121.0" layoutY="340.0" prefHeight="26.0" prefWidth="103.0" />
+      <TextField fx:id="prodMinField" layoutX="305.0" layoutY="339.0" prefHeight="26.0" prefWidth="103.0" />
       <Label layoutX="54.0" layoutY="118.0" text="ID" />
       <Label layoutX="54.0" layoutY="174.0" text="Name" />
       <Label layoutX="54.0" layoutY="229.0" text="Inv" />
@@ -47,7 +47,7 @@
             <TableColumn prefWidth="134.0" text="Price/Cost per Unit" />
          </columns>
       </TableView>
-      <Button layoutX="682.0" layoutY="482.0" mnemonicParsing="false" onAction="#onClick2Cancel" text="Save" />
+      <Button layoutX="682.0" layoutY="482.0" mnemonicParsing="false" onAction="#onClick2AddProd" text="Save" />
       <Button layoutX="682.0" layoutY="450.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="152.0" text="Remove Associated Part" />
    </children>
 </AnchorPane>
