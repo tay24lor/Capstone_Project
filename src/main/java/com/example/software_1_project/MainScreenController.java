@@ -15,7 +15,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import model.InHousePart;
 import model.Inventory;
 import model.Part;
 import model.Product;
@@ -82,14 +81,14 @@ public class MainScreenController implements Initializable {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("AddProductScreen.fxml")));
         Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
         Scene scene = new Scene(root, 900, 530);
-        stage.setTitle("Add Part");
+        stage.setTitle("Add Product");
         stage.setScene(scene);
         stage.show();
     }
     public void onClick2ModPart(ActionEvent actionEvent) throws IOException {
         Part selectedItem = partTable.getSelectionModel().getSelectedItem();
-        if (checkSelected(selectedItem)) {   // Check if no item is selected before sending data to modify screen
-            ModifyPartScreenController.sendData(selectedItem);
+        if (checkPartSelected(selectedItem)) {   // Check if no item is selected before sending data to modify screen
+            ModifyPartScreenController.sendPartData(selectedItem);
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("ModifyPartScreen.fxml")));
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
             Scene scene = new Scene(root, 650, 600);
@@ -102,16 +101,43 @@ public class MainScreenController implements Initializable {
         }
     }
     public void onClick2ModifyProduct(ActionEvent actionEvent) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("ModifyProductScreen.fxml")));
-        Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
-        Scene scene = new Scene(root, 900, 530);
-        stage.setTitle("Add Part");
-        stage.setScene(scene);
-        stage.show();
+        Product selectedItem = prodTable.getSelectionModel().getSelectedItem();
+        if (checkProdSelected(selectedItem)) {   // Check if no item is selected before sending data to modify screen
+            ModifyProductScreenController.sendProdData(selectedItem);
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("ModifyProductScreen.fxml")));
+            Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root, 900, 530);
+            stage.setTitle("Add Part");
+            stage.setScene(scene);
+            stage.show();
+        }
+        else {
+            warningLabel.setText("Please select an item to modify.");
+        }
     }
-    public void onClick2Delete() {
+    public boolean checkPartSelected(Part part) {
+        return part != null;
+    }
+    public boolean checkProdSelected(Product prod) { return prod != null; }
+    public void displayPartSearch() {
+        FilteredList<Part> filteredList = new FilteredList<>(Inventory.getAllParts(), p -> true);
+
+        partSearch.textProperty().addListener((observableValue, oldValue, newValue) -> filteredList.setPredicate(part -> {
+            if (newValue == null || newValue.isEmpty()) {
+                return true;
+            }
+            if (part.getName().toLowerCase().contains(newValue)) {
+                return true;
+            }
+            else return String.valueOf(part.getId()).equals(newValue);
+        }));
+
+        SortedList<Part> sortedData = new SortedList<>(filteredList);
+        partTable.setItems(sortedData);
+    }
+    public void onClick2DeletePart() {
         Part selectedItem = partTable.getSelectionModel().getSelectedItem();
-        if (checkSelected(selectedItem)) {
+        if (checkPartSelected(selectedItem)) {
             partTable.getItems().remove(selectedItem);
             Inventory.deletePart(selectedItem);
             warningLabel.setText("");
@@ -120,27 +146,15 @@ public class MainScreenController implements Initializable {
             warningLabel.setText("Please select an item to delete.");
         }
     }
-    public boolean checkSelected(Part part) {
-        return part != null;
-    }
-    public void displayPartSearch() {
-        FilteredList<Part> filteredList = new FilteredList<>(Inventory.getAllParts(), p -> true);
-
-        partSearch.textProperty().addListener((observableValue, oldValue, newValue) -> filteredList.setPredicate(part -> {
-            if (newValue == null || newValue.isEmpty()) {
-                return true;
-            }
-
-            if (part.getName().toLowerCase().contains(newValue)) {
-                return true;
-            }
-            else return String.valueOf(part.getId()).equals(newValue);
-        }));
-
-        SortedList<Part> sortedData = new SortedList<>(filteredList);
-
-        //sortedData.comparatorProperty().bind(Inventory.getAllParts().sorted().comparatorProperty());
-
-        partTable.setItems(sortedData);
+    public void onClick2DeleteProduct() {
+        Product selectedItem = prodTable.getSelectionModel().getSelectedItem();
+        if (checkProdSelected(selectedItem)) {
+            prodTable.getItems().remove(selectedItem);
+            Inventory.deleteProduct(selectedItem);
+            warningLabel.setText("");
+        }
+        else {
+            warningLabel.setText("Please select an item to delete.");
+        }
     }
 }

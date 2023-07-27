@@ -34,14 +34,6 @@ public class AddProductScreenController implements Initializable {
     public TextField prodMaxField;
     public TextField prodMinField;
 
-    public void onClick2Cancel(ActionEvent actionEvent) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
-        Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
-        Scene scene = new Scene(root, 883, 400);
-        stage.setTitle("Hello!");
-        stage.setScene(scene);
-        stage.show();
-    }
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         if (!(Inventory.getAllParts() == null)) {
@@ -54,6 +46,14 @@ public class AddProductScreenController implements Initializable {
 
             prodPartTable.setItems(Inventory.getAllParts());
         }
+    }
+    public void onClick2Cancel(ActionEvent actionEvent) throws IOException {
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
+        Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root, 883, 400);
+        stage.setTitle("Hello!");
+        stage.setScene(scene);
+        stage.show();
     }
 
     public void onClick2AddProd(ActionEvent actionEvent) throws IOException {

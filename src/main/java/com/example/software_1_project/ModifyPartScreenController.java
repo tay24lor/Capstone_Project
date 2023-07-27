@@ -57,7 +57,7 @@ public class ModifyPartScreenController implements Initializable {
         maxField.setText(String.valueOf(modPart.getMax()));
     }
 
-    public static void sendData(Part selectedItem) {
+    public static void sendPartData(Part selectedItem) {
         modPart = selectedItem;
         System.out.println(modPart.getClass());
     }
@@ -75,7 +75,6 @@ public class ModifyPartScreenController implements Initializable {
         outsourcedButton.setSelected(true);
         inHouseButton.setSelected(false);
         makeIDLabel.setText("Company Name");
-        modPart = OSmodPart;
     }
 
     public void onClick2InHouse() {
@@ -84,21 +83,25 @@ public class ModifyPartScreenController implements Initializable {
         makeIDLabel.setText("Machine ID");
     }
 
-    public void onClick2Mod(ActionEvent actionEvent) throws IOException, InstantiationException, IllegalAccessException {
+    public void onClick2Mod(ActionEvent actionEvent) throws IOException {
         if (inHouseButton.isSelected()) {
-            modPart.setName(nameField.getText()); modPart.setPrice(Double.parseDouble(priceField.getText()));
-            modPart.setStock(Integer.parseInt(invField.getText())); modPart.setMin(Integer.parseInt(minField.getText()));
-            modPart.setMax(Integer.parseInt(maxField.getText()));
-            //modPart.setMachineCode(Integer.parseInt(machineOrCompanyField.getText()));
+            IHmodPart = new InHousePart(0, "", 0, 0, 0, 0);
+            Inventory.updatePart(Inventory.getAllParts().indexOf(modPart), IHmodPart);
+            IHmodPart.setId(Integer.parseInt(partID.getText()));
+            IHmodPart.setName(nameField.getText()); IHmodPart.setStock(Integer.parseInt(invField.getText()));
+            IHmodPart.setPrice(Double.parseDouble(priceField.getText())); IHmodPart.setMin(Integer.parseInt(minField.getText()));
+            IHmodPart.setMax(Integer.parseInt(maxField.getText()));
+            IHmodPart.setMachineCode(Integer.parseInt(machineOrCompanyField.getText()));
 
         } else if (outsourcedButton.isSelected()) {
-            OSmodPart.setName(nameField.getText()); OSmodPart.setPrice(Double.parseDouble(priceField.getText()));
-            OSmodPart.setStock(Integer.parseInt(invField.getText())); OSmodPart.setMin(Integer.parseInt(minField.getText()));
+            OSmodPart = new OutSourcedPart(modPart.getId(), "", 0, 0, 0, 0);
+            Inventory.updatePart(Inventory.getAllParts().indexOf(modPart), OSmodPart);
+            OSmodPart.setId(Integer.parseInt(partID.getText()));
+            OSmodPart.setName(nameField.getText()); OSmodPart.setStock(Integer.parseInt(invField.getText()));
+            OSmodPart.setPrice(Double.parseDouble(priceField.getText())); OSmodPart.setMin(Integer.parseInt(minField.getText()));
             OSmodPart.setMax(Integer.parseInt(maxField.getText()));
             OSmodPart.setCompanyName(machineOrCompanyField.getText());
-
         }
-
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
         Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
         Scene scene = new Scene(root, 883, 400);
