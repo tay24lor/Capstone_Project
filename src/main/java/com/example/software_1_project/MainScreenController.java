@@ -1,5 +1,7 @@
 package com.example.software_1_project;
 
+import javafx.collections.ObservableList;
+import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
@@ -15,9 +17,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import model.Inventory;
-import model.Part;
-import model.Product;
+import model.*;
 
 import java.io.IOException;
 import java.net.URL;
@@ -40,9 +40,25 @@ public class MainScreenController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        if (!(Inventory.getAllParts() == null)) {
-            generatePartTable();
+        if (Inventory.getAllParts().isEmpty()) {
+            InHousePart part1 = new InHousePart(1, "IH_Part1", 1.00, 1, 1, 20);
+            InHousePart part2 = new InHousePart(2, "IH_Part2", 1.00, 1, 1, 20);
+            OutSourcedPart part3 = new OutSourcedPart(3, "OSPart1", 1.00, 1, 1, 20);
+            OutSourcedPart part4 = new OutSourcedPart(4, "OSPart2", 1.00, 1, 1, 20);
+
+            part1.setMachineCode(101);
+            part2.setMachineCode(102);
+
+            part3.setCompanyName("ABC");
+            part4.setCompanyName("DEF");
+
+            Inventory.addPart(part1);
+            Inventory.addPart(part2);
+            Inventory.addPart(part3);
+            Inventory.addPart(part4);
         }
+
+        generatePartTable();
         if (!(Inventory.getAllProducts() == null)) {
             generateProductTable();
         }
@@ -64,16 +80,14 @@ public class MainScreenController implements Initializable {
 
         prodTable.setItems(Inventory.getAllProducts());
     }
-
     @FXML
-    protected void onHelloButtonClick() {
+    protected void onExitButtonClick() {
         System.exit(0);
     }
     public void onClick2AddPart(ActionEvent actionEvent) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("AddPartScreen.fxml")));
         Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
         Scene scene = new Scene(root, 650, 600);
-        stage.setTitle("Add Part");
         stage.setScene(scene);
         stage.show();
     }
@@ -81,7 +95,6 @@ public class MainScreenController implements Initializable {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("AddProductScreen.fxml")));
         Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
         Scene scene = new Scene(root, 900, 530);
-        stage.setTitle("Add Product");
         stage.setScene(scene);
         stage.show();
     }
@@ -92,7 +105,6 @@ public class MainScreenController implements Initializable {
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("ModifyPartScreen.fxml")));
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
             Scene scene = new Scene(root, 650, 600);
-            stage.setTitle("Add Part");
             stage.setScene(scene);
             stage.show();
         }
@@ -107,7 +119,6 @@ public class MainScreenController implements Initializable {
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("ModifyProductScreen.fxml")));
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
             Scene scene = new Scene(root, 900, 530);
-            stage.setTitle("Add Part");
             stage.setScene(scene);
             stage.show();
         }
@@ -120,7 +131,22 @@ public class MainScreenController implements Initializable {
     }
     public boolean checkProdSelected(Product prod) { return prod != null; }
     public void displayPartSearch() {
-        FilteredList<Part> filteredList = new FilteredList<>(Inventory.getAllParts(), p -> true);
+        ObservableList<Part> partSearchList = FXCollections.observableArrayList();
+
+        if (!partSearch.getText().isEmpty()) {
+            for (int i = 0; i < Inventory.getAllParts().size(); i++) {
+                if (Integer.parseInt(partSearch.getText()) == Objects.requireNonNull(Inventory.lookupPart(i + 1)).getId()) {
+                    partSearchList.add(Inventory.lookupPart(i+1));
+                }
+            }
+            partTable.setItems(partSearchList);
+        }
+        else {
+            partSearch.clear();
+            partTable.setItems(Inventory.getAllParts());
+        }
+
+/*  FilteredList<Part> filteredList = new FilteredList<>(Inventory.getAllParts(), p -> true);
 
         partSearch.textProperty().addListener((observableValue, oldValue, newValue) -> filteredList.setPredicate(part -> {
             if (newValue == null || newValue.isEmpty()) {
@@ -129,11 +155,11 @@ public class MainScreenController implements Initializable {
             if (part.getName().toLowerCase().contains(newValue)) {
                 return true;
             }
-            else return String.valueOf(part.getId()).equals(newValue);
+            else return Inventory.lookupPart(part.getId());//String.valueOf(part.getId()).equals(newValue);
         }));
 
         SortedList<Part> sortedData = new SortedList<>(filteredList);
-        partTable.setItems(sortedData);
+        partTable.setItems(sortedData);*/
     }
     public void onClick2DeletePart() {
         Part selectedItem = partTable.getSelectionModel().getSelectedItem();
@@ -149,6 +175,11 @@ public class MainScreenController implements Initializable {
     public void onClick2DeleteProduct() {
         Product selectedItem = prodTable.getSelectionModel().getSelectedItem();
         if (checkProdSelected(selectedItem)) {
+            for (Part p : selectedItem.getAllAssociatedParts()) {
+                Inventory.addPart(p);
+            }
+
+            selectedItem.getAllAssociatedParts().clear();
             prodTable.getItems().remove(selectedItem);
             Inventory.deleteProduct(selectedItem);
             warningLabel.setText("");

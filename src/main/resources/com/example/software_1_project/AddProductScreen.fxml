@@ -56,16 +56,16 @@
             <TableColumn fx:id="priceCol" prefWidth="134.0" text="Price/Cost per Unit" />
         </columns>
       </TableView>
-      <Button layoutX="752.0" layoutY="228.0" mnemonicParsing="false" text="Add" />
-      <TableView layoutX="446.0" layoutY="278.0" prefHeight="165.0" prefWidth="410.0">
+      <Button layoutX="752.0" layoutY="228.0" mnemonicParsing="false" onAction="#add2PartsLinked" text="Add" />
+      <TableView fx:id="partsLinkedTable" layoutX="446.0" layoutY="278.0" prefHeight="165.0" prefWidth="410.0">
          <columns>
-            <TableColumn prefWidth="67.19998168945312" text="Part ID" />
-            <TableColumn prefWidth="83.20004272460938" text="Part Name" />
-            <TableColumn prefWidth="95.199951171875" text="Inventory Level" />
-            <TableColumn prefWidth="134.0" text="Price/Cost per Unit" />
+            <TableColumn fx:id="linkPartIDCol" prefWidth="67.19998168945312" text="Part ID" />
+            <TableColumn fx:id="linkPartNameCol" prefWidth="83.20004272460938" text="Part Name" />
+            <TableColumn fx:id="linkInvLvlCol" prefWidth="95.199951171875" text="Inventory Level" />
+            <TableColumn fx:id="linkCostCol" prefWidth="134.0" text="Price/Cost per Unit" />
          </columns>
       </TableView>
-      <Button layoutX="682.0" layoutY="482.0" mnemonicParsing="false" onAction="#onClick2AddProd" text="Save" />
-      <Button layoutX="682.0" layoutY="450.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="152.0" text="Remove Associated Part" />
+      <Button layoutX="682.0" layoutY="482.0" mnemonicParsing="false" onAction="#onClick2Save" text="Save" />
+      <Button layoutX="682.0" layoutY="450.0" mnemonicParsing="false" onAction="#removeAssocPart" prefHeight="26.0" prefWidth="152.0" text="Remove Associated Part" />
    </children>
 </AnchorPane>

@@ -19,10 +19,9 @@ public class Inventory {
             if (partID == part.getId()) {
                 return part;
             }
-            else {
-                System.out.println("NA");
-            }
         }
+        System.out.println("NA");
+
         return null;
     }
 
@@ -46,13 +45,11 @@ public class Inventory {
         allParts.add(index, selectedPart);
     }
     public static void updateProduct(int index, Product newProduct) {}
-    public static boolean deletePart(Part selectedPart) {
+    public static void deletePart(Part selectedPart) {
         allParts.removeIf(selectedPart::equals);
-        return true;
     }
-    public static boolean deleteProduct(Product selectedProduct) {
+    public static void deleteProduct(Product selectedProduct) {
         allProducts.removeIf(selectedProduct::equals);
-        return true;
     }
     public static ObservableList<Part> getAllParts() { return allParts; }
     public static ObservableList<Product> getAllProducts() { return allProducts; }

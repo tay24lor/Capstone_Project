@@ -66,7 +66,7 @@ public class ModifyPartScreenController implements Initializable {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
         Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
         Scene scene = new Scene(root, 883, 400);
-        stage.setTitle("Hello!");
+        stage.setTitle("Main Screen");
         stage.setScene(scene);
         stage.show();
     }
@@ -105,10 +105,11 @@ public class ModifyPartScreenController implements Initializable {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
         Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
         Scene scene = new Scene(root, 883, 400);
-        stage.setTitle("Hello!");
+        stage.setTitle("Main Screen");
         stage.setScene(scene);
         stage.show();
     }
 
+    
 
 }

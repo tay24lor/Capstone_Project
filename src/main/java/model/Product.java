@@ -72,9 +72,8 @@ public class Product {
     public void addAssociatePart(Part part) {
         associatedParts.add(part);
     }
-    public boolean deleteAssociatedPart(Part selectedAssociatedPart) {
+    public void deleteAssociatedPart(Part selectedAssociatedPart) {
         associatedParts.remove(selectedAssociatedPart);
-        return false;
     }
     public ObservableList<Part> getAllAssociatedParts() {
         return associatedParts;
