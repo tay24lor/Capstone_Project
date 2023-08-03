@@ -2,20 +2,17 @@ package com.example.software_1_project;
 
 import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
-import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
 import model.*;
 
@@ -37,6 +34,10 @@ public class MainScreenController implements Initializable {
     public TableColumn<Product, Integer> prodInvCol;
     public TableColumn<Product, Double> prodCostCol;
     public Label warningLabel;
+    public Button partSearchButton;
+    public TilePane warningPane = new TilePane();
+    public TextField productSearch;
+    public Button prodSearchButton;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -131,35 +132,30 @@ public class MainScreenController implements Initializable {
     }
     public boolean checkProdSelected(Product prod) { return prod != null; }
     public void displayPartSearch() {
-        ObservableList<Part> partSearchList = FXCollections.observableArrayList();
+        ObservableList<Part> partSearchList;
+        String search = partSearch.getText();
 
-        if (!partSearch.getText().isEmpty()) {
-            for (int i = 0; i < Inventory.getAllParts().size(); i++) {
-                if (Integer.parseInt(partSearch.getText()) == Objects.requireNonNull(Inventory.lookupPart(i + 1)).getId()) {
-                    partSearchList.add(Inventory.lookupPart(i+1));
+        if (!search.isEmpty()) {
+
+            partSearchList = Inventory.lookupPart(search);
+
+            try {
+                Part p = Inventory.lookupPart(Integer.parseInt(search));
+                if (!(p == null) && !(partSearchList.contains(p))) {
+                    partSearchList.add(p);
                 }
-            }
+            } catch (NumberFormatException ignored) {}
+
             partTable.setItems(partSearchList);
+
+            if (partSearchList.isEmpty()) {
+                sendWarning();
+            }
         }
         else {
             partSearch.clear();
             partTable.setItems(Inventory.getAllParts());
         }
-
-/*  FilteredList<Part> filteredList = new FilteredList<>(Inventory.getAllParts(), p -> true);
-
-        partSearch.textProperty().addListener((observableValue, oldValue, newValue) -> filteredList.setPredicate(part -> {
-            if (newValue == null || newValue.isEmpty()) {
-                return true;
-            }
-            if (part.getName().toLowerCase().contains(newValue)) {
-                return true;
-            }
-            else return Inventory.lookupPart(part.getId());//String.valueOf(part.getId()).equals(newValue);
-        }));
-
-        SortedList<Part> sortedData = new SortedList<>(filteredList);
-        partTable.setItems(sortedData);*/
     }
     public void onClick2DeletePart() {
         Part selectedItem = partTable.getSelectionModel().getSelectedItem();
@@ -187,5 +183,44 @@ public class MainScreenController implements Initializable {
         else {
             warningLabel.setText("Please select an item to delete.");
         }
+    }
+    public void displayProdSearch() {
+        ObservableList<Product> prodSearchList;
+        String search = productSearch.getText();
+
+        if (!search.isEmpty()) {
+
+            prodSearchList = Inventory.lookupProduct(search);
+
+            try {
+                Product p = Inventory.lookupProduct(Integer.parseInt(search));
+                if (!(p == null) && !(prodSearchList.contains(p))) {
+                    prodSearchList.add(p);
+                }
+            } catch (NumberFormatException ignored) {}
+
+            prodTable.setItems(prodSearchList);
+
+            if (prodSearchList.isEmpty()) {
+                sendWarning();
+            }
+        }
+        else {
+            productSearch.clear();
+            prodTable.setItems(Inventory.getAllProducts());
+        }
+    }
+
+    public void sendWarning() {
+        Alert alert = new Alert(Alert.AlertType.NONE);
+        EventHandler<ActionEvent> searchWarning = actionEvent -> {
+            alert.setAlertType(Alert.AlertType.WARNING);
+            alert.setContentText("****** No Matches Found ******");
+            alert.show();
+        };
+        partSearchButton.setOnAction(searchWarning);
+        partSearchButton.fire();
+        partSearch.clear();
+        partTable.setItems(Inventory.getAllParts());
     }
 }
