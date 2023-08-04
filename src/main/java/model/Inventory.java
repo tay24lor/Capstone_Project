@@ -21,7 +21,6 @@ public class Inventory {
             }
         }
         System.out.println("NA");
-
         return null;
     }
 
@@ -36,7 +35,6 @@ public class Inventory {
         }
         return null;
     }
-
 
     public static ObservableList<Part> lookupPart(String partName) {
         ObservableList<Part> results = FXCollections.observableArrayList();
@@ -61,11 +59,11 @@ public class Inventory {
         allParts.add(index, selectedPart);
     }
     public static void updateProduct(int index, Product newProduct) {}
-    public static void deletePart(Part selectedPart) {
-        allParts.removeIf(selectedPart::equals);
+    public static boolean deletePart(Part selectedPart) {
+        return allParts.removeIf(selectedPart::equals);
     }
-    public static void deleteProduct(Product selectedProduct) {
-        allProducts.removeIf(selectedProduct::equals);
+    public static boolean deleteProduct(Product selectedProduct) {
+        return allProducts.removeIf(selectedProduct::equals);
     }
     public static ObservableList<Part> getAllParts() { return allParts; }
     public static ObservableList<Product> getAllProducts() { return allProducts; }

@@ -17,7 +17,7 @@
         <RadioButton fx:id="inHouseButton" layoutX="226.0" layoutY="61.0" mnemonicParsing="false" onAction="#onClick2InHouse" selected="true" text="In-House" />
         <RadioButton fx:id="outsourcedButton" layoutX="368.0" layoutY="61.0" mnemonicParsing="false" onAction="#onClick2OutSrc" text="Outsourced" />
         <Button layoutX="351.0" layoutY="433.0" mnemonicParsing="false" onAction="#onClick2Mod" text="Save" />
-        <Button layoutX="433.0" layoutY="433.0" mnemonicParsing="false" onAction="#onClick2Exit" text="Exit" />
+        <Button layoutX="433.0" layoutY="433.0" mnemonicParsing="false" onAction="#onClick2Exit" text="Cancel" />
         <TextField fx:id="partID" editable="false" layoutX="241.0" layoutY="160.0" opacity="0.5" />
         <TextField fx:id="nameField" layoutX="241.0" layoutY="209.0" />
         <TextField fx:id="invField" layoutX="241.0" layoutY="248.0" />

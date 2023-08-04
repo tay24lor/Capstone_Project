@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class MainScreen extends Application {
+    private static boolean firstTime = true;
     @Override
     public void start(Stage primaryStage) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
@@ -20,5 +21,12 @@ public class MainScreen extends Application {
 
     public static void main(String[] args) {
         launch();
+    }
+
+    public static boolean checkFirstTime() {
+        return firstTime;
+    }
+    public static void setFirstTime() {
+        firstTime = false;
     }
 }

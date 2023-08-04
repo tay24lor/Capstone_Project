@@ -1,14 +1,14 @@
 package com.example.software_1_project;
 
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import model.Inventory;
@@ -39,6 +39,8 @@ public class ModifyProductScreenController implements Initializable {
     public TableColumn<Part, String> modAscPartNameCol;
     public TableColumn<Part, Integer> modAscPartInvCol;
     public TableColumn<Part, Double> modAscPartCostCol;
+    public TextField modProdPartSearch;
+    public Button modProdPartSearchButton;
 
     public static void sendProdData(Product selectedItem) {
         prod = selectedItem;
@@ -70,7 +72,7 @@ public class ModifyProductScreenController implements Initializable {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
         Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
         Scene scene = new Scene(root, 883, 400);
-        stage.setTitle("Hello!");
+        stage.setTitle("Main Screen");
         stage.setScene(scene);
         stage.show();
     }
@@ -84,7 +86,7 @@ public class ModifyProductScreenController implements Initializable {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
         Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
         Scene scene = new Scene(root, 883, 400);
-        stage.setTitle("Hello!");
+        stage.setTitle("Main Screen");
         stage.setScene(scene);
         stage.show();
     }
@@ -109,5 +111,45 @@ public class ModifyProductScreenController implements Initializable {
     public void setTables() {
         modAscPartTable.setItems(prod.getAllAssociatedParts());
         modProdPartTable.setItems(Inventory.getAllParts());
+    }
+
+    public void displayModProdPartSearch() {
+        ObservableList<Part> partSearchList;
+        String search = modProdPartSearch.getText();
+
+        if (!search.isEmpty()) {
+
+            partSearchList = Inventory.lookupPart(search);
+
+            try {
+                Part p = Inventory.lookupPart(Integer.parseInt(search));
+                if (!(p == null) && !(partSearchList.contains(p))) {
+                    partSearchList.add(p);
+                }
+            } catch (NumberFormatException ignored) {}
+
+            modProdPartTable.setItems(partSearchList);
+
+            if (partSearchList.isEmpty()) {
+                sendWarning();
+            }
+        }
+        else {
+            modProdPartSearch.clear();
+            modProdPartTable.setItems(Inventory.getAllParts());
+        }
+    }
+
+    public void sendWarning() {
+        Alert alert = new Alert(Alert.AlertType.NONE);
+        EventHandler<ActionEvent> searchWarning = actionEvent -> {
+            alert.setAlertType(Alert.AlertType.WARNING);
+            alert.setContentText("****** No Matches Found ******");
+            alert.show();
+        };
+        modProdPartSearchButton.setOnAction(searchWarning);
+        modProdPartSearchButton.fire();
+        modProdPartSearch.clear();
+        modAscPartTable.setItems(Inventory.getAllParts());
     }
 }

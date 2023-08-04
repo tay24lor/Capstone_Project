@@ -1,7 +1,6 @@
 package com.example.software_1_project;
 
 import javafx.collections.ObservableList;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -39,32 +38,43 @@ public class MainScreenController implements Initializable {
     public TextField productSearch;
     public Button prodSearchButton;
 
+    /**
+     * Initialize preloads the tables with data if first time launching the program.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        if (Inventory.getAllParts().isEmpty()) {
-            InHousePart part1 = new InHousePart(1, "IH_Part1", 1.00, 1, 1, 20);
-            InHousePart part2 = new InHousePart(2, "IH_Part2", 1.00, 1, 1, 20);
-            OutSourcedPart part3 = new OutSourcedPart(3, "OSPart1", 1.00, 1, 1, 20);
-            OutSourcedPart part4 = new OutSourcedPart(4, "OSPart2", 1.00, 1, 1, 20);
+        if (Inventory.getAllParts().isEmpty() && Inventory.getAllProducts().isEmpty() && MainScreen.checkFirstTime()) {
+            InHousePart part1 = new InHousePart(1, "Pedals", 1.00, 1, 1, 20);
+            InHousePart part2 = new InHousePart(2, "Chains", 1.00, 1, 1, 20);
+            OutSourcedPart part3 = new OutSourcedPart(3, "Seats", 1.00, 1, 1, 20);
+            OutSourcedPart part4 = new OutSourcedPart(4, "Handlebars", 1.00, 1, 1, 20);
 
             part1.setMachineCode(101);
             part2.setMachineCode(102);
 
-            part3.setCompanyName("ABC");
-            part4.setCompanyName("DEF");
+            part3.setCompanyName("Bike Co.");
+            part4.setCompanyName("Chains & Things");
 
             Inventory.addPart(part1);
             Inventory.addPart(part2);
             Inventory.addPart(part3);
             Inventory.addPart(part4);
+
+            Product prod1 = new Product(1, "Adult Bike", 200.00, 20, 1, 35);
+            Product prod2 = new Product(2, "Kid Bike", 100.00, 10, 1, 20);
+
+            Inventory.addProduct(prod1);
+            Inventory.addProduct(prod2);
         }
 
+        MainScreen.setFirstTime();
         generatePartTable();
-        if (!(Inventory.getAllProducts() == null)) {
-            generateProductTable();
-        }
+        generateProductTable();
     }
 
+    /**
+     * Create part table columns and populate with data.
+     */
     private void generatePartTable() {
         partIDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         partNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -73,6 +83,10 @@ public class MainScreenController implements Initializable {
 
         partTable.setItems(Inventory.getAllParts());
     }
+
+    /**
+     * Create product table columns and populate with data.
+     */
     private void generateProductTable() {
         prodIDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         prodNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -81,10 +95,10 @@ public class MainScreenController implements Initializable {
 
         prodTable.setItems(Inventory.getAllProducts());
     }
-    @FXML
-    protected void onExitButtonClick() {
-        System.exit(0);
-    }
+
+    /**
+     * Method for opening the Add Part pane.
+     */
     public void onClick2AddPart(ActionEvent actionEvent) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("AddPartScreen.fxml")));
         Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
@@ -92,6 +106,10 @@ public class MainScreenController implements Initializable {
         stage.setScene(scene);
         stage.show();
     }
+
+    /**
+     * Method for opening the Add Product pane.
+     */
     public void onClick2AddProduct(ActionEvent actionEvent) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("AddProductScreen.fxml")));
         Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
@@ -99,9 +117,13 @@ public class MainScreenController implements Initializable {
         stage.setScene(scene);
         stage.show();
     }
+
+    /**
+     * Method for opening the Modify Part pane.
+     */
     public void onClick2ModPart(ActionEvent actionEvent) throws IOException {
         Part selectedItem = partTable.getSelectionModel().getSelectedItem();
-        if (checkPartSelected(selectedItem)) {   // Check if no item is selected before sending data to modify screen
+        if (checkObjectSelected(selectedItem)) {   // Check if no item is selected before sending data to modify screen
             ModifyPartScreenController.sendPartData(selectedItem);
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("ModifyPartScreen.fxml")));
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
@@ -113,9 +135,13 @@ public class MainScreenController implements Initializable {
             warningLabel.setText("Please select an item to modify.");
         }
     }
+
+    /**
+     * Method for opening the Modify Product pane.
+     */
     public void onClick2ModifyProduct(ActionEvent actionEvent) throws IOException {
         Product selectedItem = prodTable.getSelectionModel().getSelectedItem();
-        if (checkProdSelected(selectedItem)) {   // Check if no item is selected before sending data to modify screen
+        if (checkObjectSelected(selectedItem)) {   // Check if no item is selected before sending data to modify screen
             ModifyProductScreenController.sendProdData(selectedItem);
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("ModifyProductScreen.fxml")));
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
@@ -127,14 +153,21 @@ public class MainScreenController implements Initializable {
             warningLabel.setText("Please select an item to modify.");
         }
     }
-    public boolean checkPartSelected(Part part) {
-        return part != null;
+
+    /**
+     * Method for confirming a Part or Product is selected when modifying or deleting.
+     */
+    public boolean checkObjectSelected(Object object) {
+        return object != null;
     }
-    public boolean checkProdSelected(Product prod) { return prod != null; }
+
+    /**
+     * Method used to search for parts.
+     */
     public void displayPartSearch() {
         ObservableList<Part> partSearchList;
         String search = partSearch.getText();
-
+        System.out.println(search);
         if (!search.isEmpty()) {
 
             partSearchList = Inventory.lookupPart(search);
@@ -149,41 +182,18 @@ public class MainScreenController implements Initializable {
             partTable.setItems(partSearchList);
 
             if (partSearchList.isEmpty()) {
-                sendWarning();
+                sendWarning(partSearchButton, partSearch);
+                partTable.setItems(Inventory.getAllParts());
             }
         }
         else {
-            partSearch.clear();
             partTable.setItems(Inventory.getAllParts());
         }
     }
-    public void onClick2DeletePart() {
-        Part selectedItem = partTable.getSelectionModel().getSelectedItem();
-        if (checkPartSelected(selectedItem)) {
-            partTable.getItems().remove(selectedItem);
-            Inventory.deletePart(selectedItem);
-            warningLabel.setText("");
-        }
-        else {
-            warningLabel.setText("Please select an item to delete.");
-        }
-    }
-    public void onClick2DeleteProduct() {
-        Product selectedItem = prodTable.getSelectionModel().getSelectedItem();
-        if (checkProdSelected(selectedItem)) {
-            for (Part p : selectedItem.getAllAssociatedParts()) {
-                Inventory.addPart(p);
-            }
 
-            selectedItem.getAllAssociatedParts().clear();
-            prodTable.getItems().remove(selectedItem);
-            Inventory.deleteProduct(selectedItem);
-            warningLabel.setText("");
-        }
-        else {
-            warningLabel.setText("Please select an item to delete.");
-        }
-    }
+    /**
+     * Method used to search for products.
+     */
     public void displayProdSearch() {
         ObservableList<Product> prodSearchList;
         String search = productSearch.getText();
@@ -202,7 +212,8 @@ public class MainScreenController implements Initializable {
             prodTable.setItems(prodSearchList);
 
             if (prodSearchList.isEmpty()) {
-                sendWarning();
+                sendWarning(prodSearchButton, productSearch);
+                prodTable.setItems(Inventory.getAllProducts());
             }
         }
         else {
@@ -211,16 +222,61 @@ public class MainScreenController implements Initializable {
         }
     }
 
-    public void sendWarning() {
+    /**
+     * Method for deleting parts.
+     */
+    public void onClick2DeletePart() {
+        Part selectedItem = partTable.getSelectionModel().getSelectedItem();
+        if (checkObjectSelected(selectedItem)) {
+            partTable.getItems().remove(selectedItem);
+            if (Inventory.deletePart(selectedItem))
+                warningLabel.setText("");
+        }
+        else {
+            warningLabel.setText("Please select an item to delete.");
+        }
+
+    }
+
+    /**
+     * Method for deleting products.
+     */
+    public void onClick2DeleteProduct() {
+        Product selectedItem = prodTable.getSelectionModel().getSelectedItem();
+        if (checkObjectSelected(selectedItem)) {
+            if (Inventory.deleteProduct(selectedItem)) {
+                for (Part p : selectedItem.getAllAssociatedParts()) {
+                    Inventory.addPart(p);
+                }
+                selectedItem.getAllAssociatedParts().clear();
+                prodTable.getItems().remove(selectedItem);
+                warningLabel.setText("");
+            }
+        }
+        else {
+            warningLabel.setText("Please select an item to delete.");
+        }
+    }
+
+    /**
+     * Method to create warning when no search matches are found.
+     */
+    public void sendWarning(Button button, TextField textField) {
         Alert alert = new Alert(Alert.AlertType.NONE);
         EventHandler<ActionEvent> searchWarning = actionEvent -> {
             alert.setAlertType(Alert.AlertType.WARNING);
             alert.setContentText("****** No Matches Found ******");
             alert.show();
         };
-        partSearchButton.setOnAction(searchWarning);
-        partSearchButton.fire();
-        partSearch.clear();
-        partTable.setItems(Inventory.getAllParts());
+        button.setOnAction(searchWarning);
+        button.fire();
+        textField.clear();
+        button.setOnAction(e -> displayPartSearch());
     }
+
+    /**
+     * Exits the program.
+     */
+    @FXML
+    protected void onExitButtonClick() { System.exit(0); }
 }

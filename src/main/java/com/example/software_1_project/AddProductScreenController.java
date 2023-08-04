@@ -1,16 +1,14 @@
 package com.example.software_1_project;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import model.Inventory;
@@ -23,24 +21,25 @@ import java.util.*;
 
 public class AddProductScreenController implements Initializable {
 
+    private final Product product = new Product(0, "", 0.00, 0, 0, 0);
     public TableView<Part> prodPartTable;
     public TableColumn<Part, Integer> partIDCol;
     public TableColumn<Part, String> partNameCol;
     public TableColumn<Part, Integer> invLevelCol;
     public TableColumn<Part, Double> priceCol;
+    public TableView<Part> partsLinkedTable;
+    public TableColumn<Part, Integer> linkPartIDCol;
+    public TableColumn<Part, String> linkPartNameCol;
+    public TableColumn<Part, Integer> linkInvLvlCol;
+    public TableColumn<Part, Double> linkCostCol;
     public TextField prodIDField;
     public TextField prodNameField;
     public TextField prodStockField;
     public TextField prodPriceField;
     public TextField prodMaxField;
     public TextField prodMinField;
-    private final Product product = new Product(0, "", 0.00, 0, 0, 0);
-    public TableView<Part> partsLinkedTable;
-    public TableColumn<Part, Integer> linkPartIDCol;
-    public TableColumn<Part, String> linkPartNameCol;
-    public TableColumn<Part, Integer> linkInvLvlCol;
-    public TableColumn<Part, Double> linkCostCol;
-    //private final ObservableList<Part> partsLinkedList = FXCollections.observableArrayList();
+    public TextField addProdPartSearch;
+    public Button prodPartSearchButton;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -68,10 +67,9 @@ public class AddProductScreenController implements Initializable {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         Scene scene = new Scene(root, 883, 400);
-        stage.setTitle("Hello!");
+        stage.setTitle("Main Screen");
         stage.setScene(scene);
         stage.show();
-
     }
 
     public void onClick2Save(ActionEvent actionEvent) throws IOException {
@@ -84,7 +82,7 @@ public class AddProductScreenController implements Initializable {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
         Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
         Scene scene = new Scene(root, 883, 400);
-        stage.setTitle("Hello!");
+        stage.setTitle("Main Screen");
         stage.setScene(scene);
         stage.show();
     }
@@ -116,6 +114,46 @@ public class AddProductScreenController implements Initializable {
     }
     public void setTables() {
         partsLinkedTable.setItems(product.getAllAssociatedParts());
+        prodPartTable.setItems(Inventory.getAllParts());
+    }
+
+    public void displayProdPartSearch() {
+        ObservableList<Part> partSearchList;
+        String search = addProdPartSearch.getText();
+
+        if (!search.isEmpty()) {
+
+            partSearchList = Inventory.lookupPart(search);
+
+            try {
+                Part p = Inventory.lookupPart(Integer.parseInt(search));
+                if (!(p == null) && !(partSearchList.contains(p))) {
+                    partSearchList.add(p);
+                }
+            } catch (NumberFormatException ignored) {}
+
+            prodPartTable.setItems(partSearchList);
+
+            if (partSearchList.isEmpty()) {
+                sendWarning();
+            }
+        }
+        else {
+            addProdPartSearch.clear();
+            prodPartTable.setItems(Inventory.getAllParts());
+        }
+    }
+
+    public void sendWarning() {
+        Alert alert = new Alert(Alert.AlertType.NONE);
+        EventHandler<ActionEvent> searchWarning = actionEvent -> {
+            alert.setAlertType(Alert.AlertType.WARNING);
+            alert.setContentText("****** No Matches Found ******");
+            alert.show();
+        };
+        prodPartSearchButton.setOnAction(searchWarning);
+        prodPartSearchButton.fire();
+        addProdPartSearch.clear();
         prodPartTable.setItems(Inventory.getAllParts());
     }
 }

@@ -31,8 +31,6 @@ public class AddPartScreenController {
     public TextField machineIDField;
     public ToggleGroup InOrOut;
 
-    public AddPartScreenController() {}
-
     public void onClick2OutSrc() {
         makeIDLabel.setText("Company Name");
     }
