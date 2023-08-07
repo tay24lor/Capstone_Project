@@ -11,7 +11,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
 import model.*;
 
@@ -34,7 +33,6 @@ public class MainScreenController implements Initializable {
     public TableColumn<Product, Double> prodCostCol;
     public Label warningLabel;
     public Button partSearchButton;
-    public TilePane warningPane = new TilePane();
     public TextField productSearch;
     public Button prodSearchButton;
 
