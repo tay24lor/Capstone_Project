@@ -35,6 +35,8 @@ public class MainScreenController implements Initializable {
     public Button partSearchButton;
     public TextField productSearch;
     public Button prodSearchButton;
+    public Button deleteButton;
+    Alert alert = new Alert(Alert.AlertType.NONE);
 
     /**
      * Initialize preloads the tables with data if first time launching the program.
@@ -165,7 +167,6 @@ public class MainScreenController implements Initializable {
     public void displayPartSearch() {
         ObservableList<Part> partSearchList;
         String search = partSearch.getText();
-        System.out.println(search);
         if (!search.isEmpty()) {
 
             partSearchList = Inventory.lookupPart(search);
@@ -224,32 +225,58 @@ public class MainScreenController implements Initializable {
      * Method for deleting parts.
      */
     public void onClick2DeletePart() {
+        alert.setAlertType(Alert.AlertType.CONFIRMATION);
+        alert.setContentText("Are you sure you want to delete this part?");
+
         Part selectedItem = partTable.getSelectionModel().getSelectedItem();
         if (checkObjectSelected(selectedItem)) {
-            partTable.getItems().remove(selectedItem);
-            if (Inventory.deletePart(selectedItem))
+
+            alert.showAndWait();
+
+            if (alert.getResult() == ButtonType.OK) {
+                partTable.getItems().remove(selectedItem);
+                Inventory.deletePart(selectedItem);
                 warningLabel.setText("");
+            }
+            else {
+                warningLabel.setText("Part was not deleted.");
+            }
         }
         else {
             warningLabel.setText("Please select an item to delete.");
         }
-
     }
 
     /**
      * Method for deleting products.
      */
     public void onClick2DeleteProduct() {
+
+
         Product selectedItem = prodTable.getSelectionModel().getSelectedItem();
+
         if (checkObjectSelected(selectedItem)) {
-            if (Inventory.deleteProduct(selectedItem)) {
-                for (Part p : selectedItem.getAllAssociatedParts()) {
-                    Inventory.addPart(p);
+
+            if (selectedItem.getAllAssociatedParts().isEmpty()) {
+                alert.setAlertType(Alert.AlertType.CONFIRMATION);
+                alert.setContentText("Are you sure you want to delete this part?");
+                alert.showAndWait();
+
+                if (alert.getResult() == ButtonType.OK) {
+                    prodTable.getItems().remove(selectedItem);
+                    Inventory.deleteProduct(selectedItem);
+                    warningLabel.setText("Product successfully deleted.");
                 }
-                selectedItem.getAllAssociatedParts().clear();
-                prodTable.getItems().remove(selectedItem);
-                warningLabel.setText("");
+                else {
+                    warningLabel.setText("Part was not deleted.");
+                }
             }
+            else {
+                alert.setAlertType(Alert.AlertType.INFORMATION);
+                alert.setContentText("Product could not be deleted because it has parts associated with it.");
+                alert.show();
+            }
+
         }
         else {
             warningLabel.setText("Please select an item to delete.");
@@ -260,7 +287,6 @@ public class MainScreenController implements Initializable {
      * Method to create warning when no search matches are found.
      */
     public void sendWarning(Button button, TextField textField) {
-        Alert alert = new Alert(Alert.AlertType.NONE);
         EventHandler<ActionEvent> searchWarning = actionEvent -> {
             alert.setAlertType(Alert.AlertType.WARNING);
             alert.setContentText("****** No Matches Found ******");

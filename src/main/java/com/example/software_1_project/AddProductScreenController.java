@@ -10,6 +10,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.Border;
+import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import model.Inventory;
 import model.Part;
@@ -40,6 +42,10 @@ public class AddProductScreenController implements Initializable {
     public TextField prodMinField;
     public TextField addProdPartSearch;
     public Button prodPartSearchButton;
+    public Alert alert = new Alert(Alert.AlertType.NONE);
+    public Button addProdSaveButton;
+    public Label noPartToAddLabel;
+    public Label noPartToRemoveLabel;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -77,14 +83,27 @@ public class AddProductScreenController implements Initializable {
         product.setPrice(Double.parseDouble(prodPriceField.getText())); product.setMax(Integer.parseInt(prodMaxField.getText()));
         product.setMin(Integer.parseInt(prodMinField.getText()));
         generateID(product);
-        Inventory.addProduct(product);
 
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
-        Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
-        Scene scene = new Scene(root, 883, 400);
-        stage.setTitle("Main Screen");
-        stage.setScene(scene);
-        stage.show();
+        if (validateFields(product)) {
+            Inventory.addProduct(product);
+
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
+            Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root, 883, 400);
+            stage.setTitle("Main Screen");
+            stage.setScene(scene);
+            stage.show();
+        }
+        else {
+            sendExceptionWarning();
+            addProdSaveButton.setOnAction(e -> {
+                try {
+                    onClick2Save(e);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+        }
     }
 
     private void generateID(Product product) {
@@ -99,17 +118,34 @@ public class AddProductScreenController implements Initializable {
     public void add2PartsLinked() {
         Part selectedPart = prodPartTable.getSelectionModel().getSelectedItem();
         if (!(selectedPart == null)) {
+            noPartToAddLabel.setText("");
             product.addAssociatePart(selectedPart);
             Inventory.getAllParts().remove(selectedPart);
             setTables();
         }
+        else {
+            noPartToAddLabel.setText("No part selected...");
+        }
     }
     public void removeAssocPart() {
+        noPartToRemoveLabel.setText("");
+        alert.setAlertType(Alert.AlertType.CONFIRMATION);
         Part selectedPart = partsLinkedTable.getSelectionModel().getSelectedItem();
         if (!(selectedPart == null)) {
-            Inventory.getAllParts().add(selectedPart);
-            product.deleteAssociatedPart(selectedPart);
-            setTables();
+
+            alert.showAndWait();
+
+            if (alert.getResult() == ButtonType.OK) {
+                Inventory.getAllParts().add(selectedPart);
+                product.deleteAssociatedPart(selectedPart);
+                setTables();
+            }
+            else {
+                noPartToRemoveLabel.setText("Part was not removed.");
+            }
+        }
+        else {
+            noPartToRemoveLabel.setText("No part selected...");
         }
     }
     public void setTables() {
@@ -145,7 +181,6 @@ public class AddProductScreenController implements Initializable {
     }
 
     public void sendWarning() {
-        Alert alert = new Alert(Alert.AlertType.NONE);
         EventHandler<ActionEvent> searchWarning = actionEvent -> {
             alert.setAlertType(Alert.AlertType.WARNING);
             alert.setContentText("****** No Matches Found ******");
@@ -155,5 +190,36 @@ public class AddProductScreenController implements Initializable {
         prodPartSearchButton.fire();
         addProdPartSearch.clear();
         prodPartTable.setItems(Inventory.getAllParts());
+    }
+    private boolean validateFields(Product product) {
+        if (product.getMax() < product.getMin()) {
+            prodMaxField.setBorder(Border.stroke(Paint.valueOf("red")));
+            alert.setContentText("****** Maximum is lower than minumum ******");
+            return false;
+        }
+        if (product.getStock() > product.getMax() ||
+                product.getStock() < product.getMin()) {
+            prodStockField.setBorder(Border.stroke(Paint.valueOf("red")));
+            alert.setContentText("****** Inventory is outside the max/min range ******");
+            return false;
+        }
+        return true;
+    }
+    public void sendExceptionWarning() {
+        EventHandler<ActionEvent> fieldWarning = actionEvent -> {
+            alert.setAlertType(Alert.AlertType.WARNING);
+            alert.show();
+        };
+        addProdSaveButton.setOnAction(fieldWarning);
+        addProdSaveButton.fire();
+        alert.setOnCloseRequest(e -> clearFields());
+
+    }
+    private void clearFields() {
+        prodNameField.setBorder(Border.EMPTY);
+        prodStockField.setBorder(Border.EMPTY);
+        prodPriceField.setBorder(Border.EMPTY);
+        prodMaxField.setBorder(Border.EMPTY);
+        prodMinField.setBorder(Border.EMPTY);
     }
 }

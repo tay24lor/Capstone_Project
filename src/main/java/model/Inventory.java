@@ -58,7 +58,10 @@ public class Inventory {
         allParts.remove(index);
         allParts.add(index, selectedPart);
     }
-    public static void updateProduct(int index, Product newProduct) {}
+    public static void updateProduct(int index, Product newProduct) {
+        allProducts.remove(index);
+        allProducts.add(index, newProduct);
+    }
     public static boolean deletePart(Part selectedPart) {
         return allParts.removeIf(selectedPart::equals);
     }

@@ -1,14 +1,15 @@
 package com.example.software_1_project;
 
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.layout.Border;
+import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import model.InHousePart;
 import model.Inventory;
@@ -29,11 +30,13 @@ public class ModifyPartScreenController implements Initializable {
     private static Part modPart;
     public TextField partID;
     public TextField nameField;
-    public TextField invField;
+    public TextField stockField;
     public TextField priceField;
     public TextField minField;
     public TextField maxField;
-    public TextField machineOrCompanyField;
+    public TextField machineID_CompanyField;
+    public Alert alert = new Alert(Alert.AlertType.NONE);
+    public Button modPartSaveButton;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -43,24 +46,22 @@ public class ModifyPartScreenController implements Initializable {
             outsourcedButton.fire();
         if (inHouseButton.isSelected()) {
             iHmodPart = (InHousePart) modPart;
-            machineOrCompanyField.setText(String.valueOf(iHmodPart.getMachineCode()));
+            machineID_CompanyField.setText(String.valueOf(iHmodPart.getMachineCode()));
         }
         else if (outsourcedButton.isSelected()) {
             oSmodPart = (OutSourcedPart) modPart;
-            machineOrCompanyField.setText(oSmodPart.getCompanyName());
+            machineID_CompanyField.setText(oSmodPart.getCompanyName());
         }
         partID.setText(String.valueOf(modPart.getId()));
         nameField.setText(modPart.getName());
-        invField.setText(String.valueOf(modPart.getStock()));
+        stockField.setText(String.valueOf(modPart.getStock()));
         priceField.setText(String.valueOf(modPart.getPrice()));
         minField.setText(String.valueOf(modPart.getMin()));
         maxField.setText(String.valueOf(modPart.getMax()));
     }
-
     public static void sendPartData(Part selectedItem) {
         modPart = selectedItem;
     }
-
     public void onClick2Exit(ActionEvent actionEvent) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
         Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
@@ -69,46 +70,89 @@ public class ModifyPartScreenController implements Initializable {
         stage.setScene(scene);
         stage.show();
     }
-
     public void onClick2OutSrc() {
         outsourcedButton.setSelected(true);
         inHouseButton.setSelected(false);
         makeIDLabel.setText("Company Name");
     }
-
     public void onClick2InHouse() {
         inHouseButton.setSelected(true);
         outsourcedButton.setSelected(false);
         makeIDLabel.setText("Machine ID");
     }
-
     public void onClick2Mod(ActionEvent actionEvent) throws IOException {
-        if (inHouseButton.isSelected()) {
-            iHmodPart = new InHousePart(0, "", 0, 0, 0, 0);
-            Inventory.updatePart(Inventory.getAllParts().indexOf(modPart), iHmodPart);
-            iHmodPart.setId(Integer.parseInt(partID.getText()));
-            iHmodPart.setName(nameField.getText()); iHmodPart.setStock(Integer.parseInt(invField.getText()));
-            iHmodPart.setPrice(Double.parseDouble(priceField.getText())); iHmodPart.setMin(Integer.parseInt(minField.getText()));
-            iHmodPart.setMax(Integer.parseInt(maxField.getText()));
-            iHmodPart.setMachineCode(Integer.parseInt(machineOrCompanyField.getText()));
+        Part part = null;
 
-        } else if (outsourcedButton.isSelected()) {
-            oSmodPart = new OutSourcedPart(modPart.getId(), "", 0, 0, 0, 0);
-            Inventory.updatePart(Inventory.getAllParts().indexOf(modPart), oSmodPart);
-            oSmodPart.setId(Integer.parseInt(partID.getText()));
-            oSmodPart.setName(nameField.getText()); oSmodPart.setStock(Integer.parseInt(invField.getText()));
-            oSmodPart.setPrice(Double.parseDouble(priceField.getText())); oSmodPart.setMin(Integer.parseInt(minField.getText()));
-            oSmodPart.setMax(Integer.parseInt(maxField.getText()));
-            oSmodPart.setCompanyName(machineOrCompanyField.getText());
+        if (inHouseButton.isSelected()) part = setIHStats();
+        else if (outsourcedButton.isSelected()) part = setOSStats();
+
+        assert part != null;
+        if (validateFields(part)) {
+            Inventory.updatePart(Inventory.getAllParts().indexOf(modPart), part);
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
+            Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root, 883, 400);
+            stage.setTitle("Main Screen");
+            stage.setScene(scene);
+            stage.show();
         }
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
-        Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
-        Scene scene = new Scene(root, 883, 400);
-        stage.setTitle("Main Screen");
-        stage.setScene(scene);
-        stage.show();
+        else {
+            sendWarning();
+            modPartSaveButton.setOnAction(e -> {
+                try {
+                    onClick2Mod(e);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+        }
+    }
+    private boolean validateFields(Part part) {
+        if (part.getMax() < part.getMin()) {
+            maxField.setBorder(Border.stroke(Paint.valueOf("red")));
+            alert.setContentText("****** Maximum is lower than minumum ******");
+            return false;
+        }
+        if (part.getStock() > part.getMax() ||
+                part.getStock() < part.getMin()) {
+            stockField.setBorder(Border.stroke(Paint.valueOf("red")));
+            alert.setContentText("****** Inventory is outside the max/min range ******");
+            return false;
+        }
+        return true;
+    }
+    public void sendWarning() {
+        EventHandler<ActionEvent> fieldWarning = actionEvent -> {
+            alert.setAlertType(Alert.AlertType.WARNING);
+            alert.show();
+        };
+        modPartSaveButton.setOnAction(fieldWarning);
+        modPartSaveButton.fire();
+        alert.setOnCloseRequest(e -> clearFields());
+    }
+    private void clearFields() {
+        nameField.setBorder(Border.EMPTY);
+        stockField.setBorder(Border.EMPTY);
+        priceField.setBorder(Border.EMPTY);
+        maxField.setBorder(Border.EMPTY);
+        minField.setBorder(Border.EMPTY);
+        machineID_CompanyField.setBorder(Border.EMPTY);
     }
 
-    
-
+    private InHousePart setIHStats() {
+        InHousePart part = new InHousePart(0, "", 0.00, 0, 0, 0);
+        part.setId(modPart.getId());
+        part.setName(nameField.getText()); part.setPrice(Double.parseDouble(priceField.getText()));
+        part.setStock(Integer.parseInt(stockField.getText())); part.setMin(Integer.parseInt(minField.getText()));
+        part.setMax(Integer.parseInt(maxField.getText())); part.setMachineCode(Integer.parseInt(machineID_CompanyField.getText()));
+        return part;
+    }
+    private OutSourcedPart setOSStats() {
+        OutSourcedPart part = new OutSourcedPart(0, "", 0.00, 0, 0, 0);
+        part.setId(modPart.getId());
+        part.setName(nameField.getText()); part.setPrice(Double.parseDouble(priceField.getText()));
+        part.setStock(Integer.parseInt(stockField.getText())); part.setMin(Integer.parseInt(minField.getText()));
+        part.setMax(Integer.parseInt(maxField.getText())); part.setCompanyName(machineID_CompanyField.getText());
+        return part;
+    }
 }

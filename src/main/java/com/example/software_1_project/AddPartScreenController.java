@@ -73,7 +73,6 @@ public class AddPartScreenController {
             });
         }
     }
-
     private InHousePart setIHStats() {
         InHousePart part = new InHousePart(0, "", 0.00, 0, 0, 0);
         part.setId(0);
@@ -92,7 +91,6 @@ public class AddPartScreenController {
         generateID(part);
         return part;
     }
-
     private void generateID(Part part) {
         int id = 0;
         for (Part p : Inventory.getAllParts()) {
@@ -101,7 +99,6 @@ public class AddPartScreenController {
         id++;
         part.setId(id);
     }
-
     private boolean validateFields(Part part) {
         if (part.getMax() < part.getMin()) {
             maxField.setBorder(Border.stroke(Paint.valueOf("red")));
@@ -119,8 +116,6 @@ public class AddPartScreenController {
     public void sendWarning() {
         EventHandler<ActionEvent> fieldWarning = actionEvent -> {
             alert.setAlertType(Alert.AlertType.WARNING);
-            alert.setX(IDField.getLayoutX());
-            alert.setY(65);
             alert.show();
         };
         addPartSaveButton.setOnAction(fieldWarning);
@@ -128,7 +123,6 @@ public class AddPartScreenController {
         alert.setOnCloseRequest(e -> clearFields());
 
     }
-
     private void clearFields() {
         nameField.setBorder(Border.EMPTY);
         stockField.setBorder(Border.EMPTY);
