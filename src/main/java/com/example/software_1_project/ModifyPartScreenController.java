@@ -83,11 +83,9 @@ public class ModifyPartScreenController implements Initializable {
     public void onClick2Mod(ActionEvent actionEvent) throws IOException {
         Part part = null;
 
-        if (inHouseButton.isSelected()) part = setIHStats();
-        else if (outsourcedButton.isSelected()) part = setOSStats();
-
-        assert part != null;
-        if (validateFields(part)) {
+        if (validateFields()) {
+            if (inHouseButton.isSelected()) part = setIHStats();
+            else if (outsourcedButton.isSelected()) part = setOSStats();
             Inventory.updatePart(Inventory.getAllParts().indexOf(modPart), part);
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
@@ -107,14 +105,51 @@ public class ModifyPartScreenController implements Initializable {
             });
         }
     }
-    private boolean validateFields(Part part) {
-        if (part.getMax() < part.getMin()) {
+    private boolean validateFields() {
+        try {
+            Double.parseDouble(priceField.getText());
+        } catch (NumberFormatException ex) {
+            alert.setContentText("****** Price must be a decimal number ******");
+            priceField.setBorder(Border.stroke(Paint.valueOf("red")));
+            return false;
+        }
+        try {
+            Integer.parseInt(stockField.getText());
+        } catch (NumberFormatException ex) {
+            alert.setContentText("****** Inventory must be a whole number ******");
+            stockField.setBorder(Border.stroke(Paint.valueOf("red")));
+            return false;
+        }
+        try {
+            Integer.parseInt(maxField.getText());
+        } catch (NumberFormatException ex) {
+            alert.setContentText("****** Maximum field must be a whole number ******");
+            maxField.setBorder(Border.stroke(Paint.valueOf("red")));
+            return false;
+        }
+        try {
+            Integer.parseInt(minField.getText());
+        } catch (NumberFormatException ex) {
+            alert.setContentText("****** Minimum field must be a whole number ******");
+            minField.setBorder(Border.stroke(Paint.valueOf("red")));
+            return false;
+        }
+        if (Integer.parseInt(maxField.getText()) < Integer.parseInt(minField.getText())) {
             maxField.setBorder(Border.stroke(Paint.valueOf("red")));
             alert.setContentText("****** Maximum is lower than minumum ******");
             return false;
         }
-        if (part.getStock() > part.getMax() ||
-                part.getStock() < part.getMin()) {
+        if (inHouseButton.isSelected()) {
+            try {
+                Integer.parseInt(machineID_CompanyField.getText());
+            } catch (NumberFormatException ex) {
+                alert.setContentText("****** Machine ID must be a whole number ******");
+                machineID_CompanyField.setBorder(Border.stroke(Paint.valueOf("red")));
+                return false;
+            }
+        }
+        if (Integer.parseInt(stockField.getText()) > Integer.parseInt(maxField.getText()) ||
+                Integer.parseInt(stockField.getText()) < Integer.parseInt(minField.getText())) {
             stockField.setBorder(Border.stroke(Paint.valueOf("red")));
             alert.setContentText("****** Inventory is outside the max/min range ******");
             return false;

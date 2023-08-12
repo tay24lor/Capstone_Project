@@ -25,6 +25,7 @@ import java.util.ResourceBundle;
 public class ModifyProductScreenController implements Initializable {
 
     private static Product prod;
+    private final Product product = new Product(0,"",0.00,0,0,0);
     public TextField modProdIDField;
     public TextField modProdNameField;
     public TextField modProdStockField;
@@ -84,20 +85,20 @@ public class ModifyProductScreenController implements Initializable {
     }
 
     public void onClick2SaveModifyProduct(ActionEvent actionEvent) throws IOException {
-        Product product = new Product(0,"",0.00,0,0,0);
-        product.setId(Integer.parseInt(modProdIDField.getText()));
-        product.setName(modProdNameField.getText());
-        product.setStock(Integer.parseInt(modProdStockField.getText()));
-        product.setPrice(Double.parseDouble(modProdPriceField.getText()));
-        product.setMax(Integer.parseInt(modProdMaxField.getText()));
-        product.setMin(Integer.parseInt(modProdMinField.getText()));
-        if (validateFields(product)) {
+        if (validateFields()) {
+            product.setId(Integer.parseInt(modProdIDField.getText()));
+            product.setName(modProdNameField.getText());
+            product.setStock(Integer.parseInt(modProdStockField.getText()));
+            product.setPrice(Double.parseDouble(modProdPriceField.getText()));
+            product.setMax(Integer.parseInt(modProdMaxField.getText()));
+            product.setMin(Integer.parseInt(modProdMinField.getText()));
+
             for (Part part : prod.getAllAssociatedParts()) {
                 product.addAssociatePart(part);
             }
             Inventory.updateProduct(Inventory.getAllProducts().indexOf(prod), product);
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
-            Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
+            Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
             Scene scene = new Scene(root, 883, 400);
             stage.setTitle("Main Screen");
             stage.setScene(scene);
@@ -193,14 +194,42 @@ public class ModifyProductScreenController implements Initializable {
         modProdPartSearch.clear();
         modAscPartTable.setItems(Inventory.getAllParts());
     }
-    private boolean validateFields(Product product) {
-        if (product.getMax() < product.getMin()) {
+    private boolean validateFields() {
+        try {
+            Double.parseDouble(modProdPriceField.getText());
+        } catch (NumberFormatException ex) {
+            alert.setContentText("****** Price must be a decimal number ******");
+            modProdPriceField.setBorder(Border.stroke(Paint.valueOf("red")));
+            return false;
+        }
+        try {
+            Integer.parseInt(modProdStockField.getText());
+        } catch (NumberFormatException ex) {
+            alert.setContentText("****** Inventory must be a whole number ******");
+            modProdStockField.setBorder(Border.stroke(Paint.valueOf("red")));
+            return false;
+        }
+        try {
+            Integer.parseInt(modProdMaxField.getText());
+        } catch (NumberFormatException ex) {
+            alert.setContentText("****** Maximum field must be a whole number ******");
+            modProdMaxField.setBorder(Border.stroke(Paint.valueOf("red")));
+            return false;
+        }
+        try {
+            Integer.parseInt(modProdMinField.getText());
+        } catch (NumberFormatException ex) {
+            alert.setContentText("****** Minimum field must be a whole number ******");
+            modProdMinField.setBorder(Border.stroke(Paint.valueOf("red")));
+            return false;
+        }
+        if (Integer.parseInt(modProdMaxField.getText()) < Integer.parseInt(modProdMinField.getText())) {
             modProdMaxField.setBorder(Border.stroke(Paint.valueOf("red")));
             alert.setContentText("****** Maximum is lower than minumum ******");
             return false;
         }
-        if (product.getStock() > product.getMax() ||
-                product.getStock() < product.getMin()) {
+        if (Integer.parseInt(modProdStockField.getText()) > Integer.parseInt(modProdMaxField.getText()) ||
+                Integer.parseInt(modProdStockField.getText()) < Integer.parseInt(modProdMinField.getText())) {
             modProdStockField.setBorder(Border.stroke(Paint.valueOf("red")));
             alert.setContentText("****** Inventory is outside the max/min range ******");
             return false;
