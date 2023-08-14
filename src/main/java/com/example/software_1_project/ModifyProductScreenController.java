@@ -1,5 +1,6 @@
 package com.example.software_1_project;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -48,6 +49,7 @@ public class ModifyProductScreenController implements Initializable {
     public Button modProdSaveButton;
     public Label noPartToRemoveLabel;
     public Label noPartToAddLabel;
+    public ObservableList<Part> partSearchList = FXCollections.observableArrayList();
 
     public static void sendProdData(Product selectedItem) {
         prod = selectedItem;
@@ -156,28 +158,28 @@ public class ModifyProductScreenController implements Initializable {
     }
 
     public void displayModProdPartSearch() {
-        ObservableList<Part> partSearchList;
+
         String search = modProdPartSearch.getText();
 
         if (!search.isEmpty()) {
 
-            partSearchList = Inventory.lookupPart(search);
 
             try {
+                partSearchList = Inventory.lookupPart(search);
                 Part p = Inventory.lookupPart(Integer.parseInt(search));
                 if (!(p == null) && !(partSearchList.contains(p))) {
                     partSearchList.add(p);
                 }
             } catch (NumberFormatException ignored) {}
-
-            modProdPartTable.setItems(partSearchList);
-
+            
             if (partSearchList.isEmpty()) {
                 sendWarning();
             }
+            else {
+                modProdPartTable.setItems(partSearchList);
+            }
         }
         else {
-            modProdPartSearch.clear();
             modProdPartTable.setItems(Inventory.getAllParts());
         }
     }
@@ -191,8 +193,7 @@ public class ModifyProductScreenController implements Initializable {
         };
         modProdPartSearchButton.setOnAction(searchWarning);
         modProdPartSearchButton.fire();
-        modProdPartSearch.clear();
-        modAscPartTable.setItems(Inventory.getAllParts());
+        modProdPartSearchButton.setOnAction(a -> displayModProdPartSearch());
     }
     private boolean validateFields() {
         try {

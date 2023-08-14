@@ -40,6 +40,9 @@ public class MainScreenController implements Initializable {
 
     /**
      * Initialize preloads the tables with data if first time launching the program.
+     * BUG FIX: At first I tried to set the 'firstTime' variable from true to false in the initialize method, however
+     * this caused it to always be set to true or always set to false. So the fields would always populate or never
+     * populate. To fix this I moved the variable to MainScreen.java and only allowed that class to get and set it.
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -163,6 +166,7 @@ public class MainScreenController implements Initializable {
 
     /**
      * Method used to search for parts.
+     * FUTURE ENHANCEMENT: Search by machine code or company name.
      */
     public void displayPartSearch() {
         ObservableList<Part> partSearchList;
@@ -192,6 +196,7 @@ public class MainScreenController implements Initializable {
 
     /**
      * Method used to search for products.
+     * FUTURE ENHANCEMENT: The ability to search for products by parts associated.
      */
     public void displayProdSearch() {
         ObservableList<Product> prodSearchList;
@@ -223,20 +228,20 @@ public class MainScreenController implements Initializable {
 
     /**
      * Method for deleting parts.
+     * FUTURE ENHANCEMENT: Allowing the user to select multiple parts and delete them all with one click.
      */
-    public void onClick2DeletePart() {
+    public boolean onClick2DeletePart() {
         alert.setAlertType(Alert.AlertType.CONFIRMATION);
         alert.setContentText("Are you sure you want to delete this part?");
 
         Part selectedItem = partTable.getSelectionModel().getSelectedItem();
         if (checkObjectSelected(selectedItem)) {
-
             alert.showAndWait();
 
             if (alert.getResult() == ButtonType.OK) {
                 partTable.getItems().remove(selectedItem);
-                Inventory.deletePart(selectedItem);
                 warningLabel.setText("");
+                return Inventory.deletePart(selectedItem);
             }
             else {
                 warningLabel.setText("Part was not deleted.");
@@ -245,30 +250,32 @@ public class MainScreenController implements Initializable {
         else {
             warningLabel.setText("Please select an item to delete.");
         }
+        return false;
     }
 
     /**
      * Method for deleting products.
+     * BUG FIX: Deleting a product caused the associated parts to be deleted as well. This was fixed by checking if
+     * the selected item's associated parts list was empty or not. If not, the user is given a warning that the
+     * product has parts associated and cannot be deleted.
      */
-    public void onClick2DeleteProduct() {
-
-
+    public boolean onClick2DeleteProduct() {
         Product selectedItem = prodTable.getSelectionModel().getSelectedItem();
 
         if (checkObjectSelected(selectedItem)) {
 
             if (selectedItem.getAllAssociatedParts().isEmpty()) {
                 alert.setAlertType(Alert.AlertType.CONFIRMATION);
-                alert.setContentText("Are you sure you want to delete this part?");
+                alert.setContentText("Are you sure you want to delete this product?");
                 alert.showAndWait();
 
                 if (alert.getResult() == ButtonType.OK) {
                     prodTable.getItems().remove(selectedItem);
-                    Inventory.deleteProduct(selectedItem);
                     warningLabel.setText("Product successfully deleted.");
+                    return Inventory.deleteProduct(selectedItem);
                 }
                 else {
-                    warningLabel.setText("Part was not deleted.");
+                    warningLabel.setText("Product was not deleted.");
                 }
             }
             else {
@@ -276,11 +283,11 @@ public class MainScreenController implements Initializable {
                 alert.setContentText("Product could not be deleted because it has parts associated with it.");
                 alert.show();
             }
-
         }
         else {
             warningLabel.setText("Please select an item to delete.");
         }
+        return false;
     }
 
     /**

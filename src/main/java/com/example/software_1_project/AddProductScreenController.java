@@ -46,6 +46,7 @@ public class AddProductScreenController implements Initializable {
     public Button addProdSaveButton;
     public Label noPartToAddLabel;
     public Label noPartToRemoveLabel;
+    public ObservableList<Part> partSearchList;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -153,28 +154,28 @@ public class AddProductScreenController implements Initializable {
     }
 
     public void displayProdPartSearch() {
-        ObservableList<Part> partSearchList;
+
         String search = addProdPartSearch.getText();
 
         if (!search.isEmpty()) {
 
-            partSearchList = Inventory.lookupPart(search);
 
             try {
+                partSearchList = Inventory.lookupPart(search);
                 Part p = Inventory.lookupPart(Integer.parseInt(search));
                 if (!(p == null) && !(partSearchList.contains(p))) {
                     partSearchList.add(p);
                 }
             } catch (NumberFormatException ignored) {}
 
-            prodPartTable.setItems(partSearchList);
-
             if (partSearchList.isEmpty()) {
                 sendWarning();
             }
+            else {
+                prodPartTable.setItems(partSearchList);
+            }
         }
         else {
-            addProdPartSearch.clear();
             prodPartTable.setItems(Inventory.getAllParts());
         }
     }
@@ -188,7 +189,7 @@ public class AddProductScreenController implements Initializable {
         prodPartSearchButton.setOnAction(searchWarning);
         prodPartSearchButton.fire();
         addProdPartSearch.clear();
-        prodPartTable.setItems(Inventory.getAllParts());
+        prodPartSearchButton.setOnAction(a -> displayProdPartSearch());
     }
     private boolean validateFields() {
         try {

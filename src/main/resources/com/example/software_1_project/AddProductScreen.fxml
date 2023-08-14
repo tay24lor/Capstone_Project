@@ -72,7 +72,7 @@
    </TableView>
    <Button fx:id="addProdSaveButton" layoutX="682.0" layoutY="482.0" mnemonicParsing="false" onAction="#onClick2Save" text="Save" />
    <Button layoutX="682.0" layoutY="450.0" mnemonicParsing="false" onAction="#removeAssocPart" prefHeight="26.0" prefWidth="152.0" text="Remove Associated Part" />
-   <TextField fx:id="addProdPartSearch" layoutX="673.0" layoutY="21.0" />
+   <TextField fx:id="addProdPartSearch" layoutX="673.0" layoutY="21.0" promptText="Search by ID or name..." />
    <Button fx:id="prodPartSearchButton" layoutX="823.0" layoutY="21.0" mnemonicParsing="false" onAction="#displayProdPartSearch" text="&gt;&gt;" />
    <Label fx:id="noPartToAddLabel" layoutX="560.0" layoutY="232.0" prefHeight="17.0" prefWidth="170.0" textAlignment="RIGHT" textFill="red" />
    <Label fx:id="noPartToRemoveLabel" layoutX="479.0" layoutY="455.0" prefHeight="17.0" prefWidth="170.0" textAlignment="RIGHT" textFill="red" />
