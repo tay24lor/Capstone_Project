@@ -1,5 +1,6 @@
 package com.example.software_1_project;
 
+import Database.ProductDAO;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -19,6 +20,7 @@ import model.Product;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.*;
 
 public class AddProductScreenController implements Initializable {
@@ -79,13 +81,13 @@ public class AddProductScreenController implements Initializable {
         stage.show();
     }
 
-    public void onClick2Save(ActionEvent actionEvent) throws IOException {
+    public void onClick2Save(ActionEvent actionEvent) throws IOException, SQLException {
         if (validateFields()) {
             product.setName(prodNameField.getText()); product.setStock(Integer.parseInt(prodStockField.getText()));
             product.setPrice(Double.parseDouble(prodPriceField.getText())); product.setMax(Integer.parseInt(prodMaxField.getText()));
             product.setMin(Integer.parseInt(prodMinField.getText()));
             generateID(product);
-            Inventory.addProduct(product);
+            ProductDAO.insert(product);
 
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
@@ -99,7 +101,7 @@ public class AddProductScreenController implements Initializable {
             addProdSaveButton.setOnAction(e -> {
                 try {
                     onClick2Save(e);
-                } catch (IOException ex) {
+                } catch (IOException | SQLException ex) {
                     throw new RuntimeException(ex);
                 }
             });

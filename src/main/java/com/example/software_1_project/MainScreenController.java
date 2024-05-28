@@ -1,5 +1,7 @@
 package com.example.software_1_project;
 
+import Database.PartDAO;
+import Database.ProductDAO;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -16,6 +18,7 @@ import model.*;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -36,6 +39,7 @@ public class MainScreenController implements Initializable {
     public TextField productSearch;
     public Button prodSearchButton;
     public Button deleteButton;
+    public Button sampleButton;
     Alert alert = new Alert(Alert.AlertType.NONE);
 
     /**
@@ -46,57 +50,42 @@ public class MainScreenController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        if (Inventory.getAllParts().isEmpty() && Inventory.getAllProducts().isEmpty() && MainScreen.checkFirstTime()) {
-            InHousePart part1 = new InHousePart(1, "Pedals", 1.00, 1, 1, 20);
-            InHousePart part2 = new InHousePart(2, "Chains", 1.00, 1, 1, 20);
-            OutSourcedPart part3 = new OutSourcedPart(3, "Seats", 1.00, 1, 1, 20);
-            OutSourcedPart part4 = new OutSourcedPart(4, "Handlebars", 1.00, 1, 1, 20);
 
-            part1.setMachineCode(101);
-            part2.setMachineCode(102);
-
-            part3.setCompanyName("Bike Co.");
-            part4.setCompanyName("Chains & Things");
-
-            Inventory.addPart(part1);
-            Inventory.addPart(part2);
-            Inventory.addPart(part3);
-            Inventory.addPart(part4);
-
-            Product prod1 = new Product(1, "Adult Bike", 200.00, 20, 1, 35);
-            Product prod2 = new Product(2, "Kid Bike", 100.00, 10, 1, 20);
-
-            Inventory.addProduct(prod1);
-            Inventory.addProduct(prod2);
-        }
-
-        MainScreen.setFirstTime();
         generatePartTable();
         generateProductTable();
+        System.out.println(PartDAO.getParts().size());
     }
 
     /**
      * Create part table columns and populate with data.
      */
     private void generatePartTable() {
+        partTable.getItems().clear();
+        PartDAO.getParts().clear();
+        PartDAO.setParts();
+
         partIDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         partNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         invLevelCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
         priceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
 
-        partTable.setItems(Inventory.getAllParts());
+        partTable.setItems(PartDAO.getParts());
     }
 
     /**
      * Create product table columns and populate with data.
      */
     private void generateProductTable() {
+        prodTable.getItems().clear();
+        ProductDAO.getProducts().clear();
+        ProductDAO.setProducts();
+
         prodIDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         prodNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         prodInvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
         prodCostCol.setCellValueFactory(new PropertyValueFactory<>("price"));
 
-        prodTable.setItems(Inventory.getAllProducts());
+        prodTable.setItems(ProductDAO.getProducts());
     }
 
     /**
@@ -173,10 +162,10 @@ public class MainScreenController implements Initializable {
         String search = partSearch.getText();
         if (!search.isEmpty()) {
 
-            partSearchList = Inventory.lookupPart(search);
+            partSearchList = PartDAO.lookupPart(search);
 
             try {
-                Part p = Inventory.lookupPart(Integer.parseInt(search));
+                Part p = PartDAO.lookupPart(Integer.parseInt(search));
                 if (!(p == null) && !(partSearchList.contains(p))) {
                     partSearchList.add(p);
                 }
@@ -185,12 +174,12 @@ public class MainScreenController implements Initializable {
             partTable.setItems(partSearchList);
 
             if (partSearchList.isEmpty()) {
-                sendWarning(partSearchButton, partSearch);
-                partTable.setItems(Inventory.getAllParts());
+                sendWarning(partSearchButton, partSearch, 1);
+                partTable.setItems(PartDAO.getParts());
             }
         }
         else {
-            partTable.setItems(Inventory.getAllParts());
+            partTable.setItems(PartDAO.getParts());
         }
     }
 
@@ -204,10 +193,10 @@ public class MainScreenController implements Initializable {
 
         if (!search.isEmpty()) {
 
-            prodSearchList = Inventory.lookupProduct(search);
+            prodSearchList = ProductDAO.lookupProduct(search);
 
             try {
-                Product p = Inventory.lookupProduct(Integer.parseInt(search));
+                Product p = ProductDAO.lookupProduct(Integer.parseInt(search));
                 if (!(p == null) && !(prodSearchList.contains(p))) {
                     prodSearchList.add(p);
                 }
@@ -216,13 +205,13 @@ public class MainScreenController implements Initializable {
             prodTable.setItems(prodSearchList);
 
             if (prodSearchList.isEmpty()) {
-                sendWarning(prodSearchButton, productSearch);
-                prodTable.setItems(Inventory.getAllProducts());
+                sendWarning(prodSearchButton, productSearch, 2);
+                prodTable.setItems(ProductDAO.getProducts());
             }
         }
         else {
             productSearch.clear();
-            prodTable.setItems(Inventory.getAllProducts());
+            prodTable.setItems(ProductDAO.getProducts());
         }
     }
 
@@ -230,7 +219,7 @@ public class MainScreenController implements Initializable {
      * Method for deleting parts.
      * FUTURE ENHANCEMENT: Allowing the user to select multiple parts and delete them all with one click.
      */
-    public boolean onClick2DeletePart() {
+    public boolean onClick2DeletePart() throws SQLException {
         alert.setAlertType(Alert.AlertType.CONFIRMATION);
         alert.setContentText("Are you sure you want to delete this part?");
 
@@ -241,7 +230,8 @@ public class MainScreenController implements Initializable {
             if (alert.getResult() == ButtonType.OK) {
                 partTable.getItems().remove(selectedItem);
                 warningLabel.setText("");
-                return Inventory.deletePart(selectedItem);
+                PartDAO.deletePart(selectedItem.getId());
+                return true;
             }
             else {
                 warningLabel.setText("Part was not deleted.");
@@ -259,7 +249,7 @@ public class MainScreenController implements Initializable {
      * the selected item's associated parts list was empty or not. If not, the user is given a warning that the
      * product has parts associated and cannot be deleted.
      */
-    public boolean onClick2DeleteProduct() {
+    public boolean onClick2DeleteProduct() throws SQLException {
         Product selectedItem = prodTable.getSelectionModel().getSelectedItem();
 
         if (checkObjectSelected(selectedItem)) {
@@ -272,7 +262,8 @@ public class MainScreenController implements Initializable {
                 if (alert.getResult() == ButtonType.OK) {
                     prodTable.getItems().remove(selectedItem);
                     warningLabel.setText("Product successfully deleted.");
-                    return Inventory.deleteProduct(selectedItem);
+                    ProductDAO.delete(selectedItem.getId());
+                    return true;
                 }
                 else {
                     warningLabel.setText("Product was not deleted.");
@@ -293,7 +284,7 @@ public class MainScreenController implements Initializable {
     /**
      * Method to create warning when no search matches are found.
      */
-    public void sendWarning(Button button, TextField textField) {
+    public void sendWarning(Button button, TextField textField, int b) {
         EventHandler<ActionEvent> searchWarning = actionEvent -> {
             alert.setAlertType(Alert.AlertType.WARNING);
             alert.setContentText("****** No Matches Found ******");
@@ -302,12 +293,70 @@ public class MainScreenController implements Initializable {
         button.setOnAction(searchWarning);
         button.fire();
         textField.clear();
-        button.setOnAction(e -> displayPartSearch());
+        if (b == 1)
+            button.setOnAction(e -> displayPartSearch());
+        else if (b == 2)
+            button.setOnAction(e -> displayProdSearch());
     }
 
     /**
      * Exits the program.
      */
     @FXML
-    protected void onExitButtonClick() { System.exit(0); }
+    protected void onExitButtonClick(ActionEvent actionEvent) throws IOException {
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("loginScreen.fxml")));
+        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root, 600, 400);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    /**
+     * NEW FUNCTION
+     * Opens reports page
+     * @param actionEvent action event
+     */
+    public void onClick2ViewReports(ActionEvent actionEvent) throws IOException {
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("reportsScreen.fxml")));
+        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root, 900, 530);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public void loadSamples() throws SQLException {
+        if (PartDAO.getParts().isEmpty() && Inventory.getAllProducts().isEmpty()) {
+            InHousePart part1 = new InHousePart(1, "Pedals", 1.00, 1, 1, 20);
+            InHousePart part2 = new InHousePart(2, "Chains", 1.00, 1, 1, 20);
+            OutSourcedPart part3 = new OutSourcedPart(3, "Seats", 1.00, 1, 1, 20);
+            OutSourcedPart part4 = new OutSourcedPart(4, "Handlebars", 1.00, 1, 1, 20);
+
+            part1.setMachineCode(101);
+            part2.setMachineCode(102);
+
+            part3.setCompanyName("Bike Co.");
+            part4.setCompanyName("Chains & Things");
+
+            PartDAO.insert(part1, part1.getMachineCode(), "", 0);
+            PartDAO.insert(part2, part2.getMachineCode(), "", 0);
+            PartDAO.insert(part3, 0, part3.getCompanyName(), 0);
+            PartDAO.insert(part4, 0, part4.getCompanyName(), 0);
+
+            Product prod1 = new Product(1, "Adult Bike", 200.00, 20, 1, 35);
+            Product prod2 = new Product(2, "Kid Bike", 100.00, 10, 1, 20);
+
+            ProductDAO.insert(prod1);
+            ProductDAO.insert(prod2);
+
+            partTable.setItems(PartDAO.getParts());
+            prodTable.setItems(ProductDAO.getProducts());
+
+
+        }
+        else {
+            alert.setAlertType(Alert.AlertType.WARNING);
+            alert.setContentText("Tables must be empty.");
+            alert.showAndWait();
+        }
+    }
 }

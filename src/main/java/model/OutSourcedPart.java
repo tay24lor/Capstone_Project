@@ -4,7 +4,7 @@ public class OutSourcedPart extends Part{
 
     private String companyName;
 
-    public OutSourcedPart(int id, String name, double price, int stock, int min, int max) {
+    public OutSourcedPart(Integer id, String name, double price, int stock, int min, int max) {
         super(id, name, price, stock, min, max);
     }
 

@@ -1,5 +1,6 @@
 package com.example.software_1_project;
 
+import Database.PartDAO;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -11,11 +12,11 @@ import javafx.scene.layout.Border;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import model.InHousePart;
-import model.Inventory;
 import model.OutSourcedPart;
 import model.Part;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Objects;
 
 public class AddPartScreenController {
@@ -47,13 +48,19 @@ public class AddPartScreenController {
         stage.setScene(scene);
         stage.show();
     }
-    public void onClick2Save(ActionEvent actionEvent) throws IOException {
-        Part part = null;
+    public void onClick2Save(ActionEvent actionEvent) throws IOException, SQLException {
 
         if (validateFields()) {
-            if (inHouseButton.isSelected()) part = setIHStats();
-            else if (outsourcedButton.isSelected()) part = setOSStats();
-            Inventory.addPart(part);
+            Part part;
+            if (inHouseButton.isSelected()) {
+                part = setIHStats();
+                PartDAO.insert(part, Integer.parseInt(machineID_CompanyField.getText()), "", 0);
+            }
+            else if (outsourcedButton.isSelected()) {
+                part = setOSStats();
+                PartDAO.insert(part, 0, machineID_CompanyField.getText(), 0);
+
+            }
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
             Scene scene = new Scene(root, 883, 400);
@@ -66,7 +73,7 @@ public class AddPartScreenController {
             addPartSaveButton.setOnAction(e -> {
                 try {
                     onClick2Save(e);
-                } catch (IOException ex) {
+                } catch (IOException | SQLException ex) {
                     throw new RuntimeException(ex);
                 }
             });
@@ -74,29 +81,24 @@ public class AddPartScreenController {
     }
     private InHousePart setIHStats() {
         InHousePart part = new InHousePart(0, "", 0.00, 0, 0, 0);
+        part.setId(PartDAO.getParts().size() + 1);
         part.setName(nameField.getText()); part.setPrice(Double.parseDouble(priceField.getText()));
         part.setStock(Integer.parseInt(stockField.getText())); part.setMin(Integer.parseInt(minField.getText()));
-        part.setMax(Integer.parseInt(maxField.getText()));
-        generateID(part);
+        part.setMax(Integer.parseInt(maxField.getText())); part.setMachineCode(Integer.parseInt(machineID_CompanyField.getText()));
+
         return part;
 
     }
     private OutSourcedPart setOSStats() {
         OutSourcedPart part = new OutSourcedPart(0, "", 0.00, 0, 0, 0);
+        part.setId(PartDAO.getParts().size() + 1);
         part.setName(nameField.getText()); part.setPrice(Double.parseDouble(priceField.getText()));
         part.setStock(Integer.parseInt(stockField.getText())); part.setMin(Integer.parseInt(minField.getText()));
         part.setMax(Integer.parseInt(maxField.getText())); part.setCompanyName(machineID_CompanyField.getText());
-        generateID(part);
+
         return part;
     }
-    private void generateID(Part part) {
-        int id = 0;
-        for (Part p : Inventory.getAllParts()) {
-            id = p.getId();
-        }
-        id++;
-        part.setId(id);
-    }
+
     private boolean validateFields() {
         try {
             Double.parseDouble(priceField.getText());

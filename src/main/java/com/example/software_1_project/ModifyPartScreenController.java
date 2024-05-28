@@ -1,5 +1,6 @@
 package com.example.software_1_project;
 
+import Database.PartDAO;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -18,6 +19,7 @@ import model.Part;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -80,13 +82,18 @@ public class ModifyPartScreenController implements Initializable {
         outsourcedButton.setSelected(false);
         makeIDLabel.setText("Machine ID");
     }
-    public void onClick2Mod(ActionEvent actionEvent) throws IOException {
-        Part part = null;
-
+    public void onClick2Mod(ActionEvent actionEvent) throws IOException, SQLException {
+        Part part;
+        PartDAO.getParts().remove(modPart);
         if (validateFields()) {
-            if (inHouseButton.isSelected()) part = setIHStats();
-            else if (outsourcedButton.isSelected()) part = setOSStats();
-            Inventory.updatePart(Inventory.getAllParts().indexOf(modPart), part);
+            if (inHouseButton.isSelected()) {
+                part = setIHStats();
+                PartDAO.update(part, Integer.parseInt(machineID_CompanyField.getText()), "", 0);
+            }
+            else if (outsourcedButton.isSelected()) {
+                part = setOSStats();
+                PartDAO.update(part, 0, machineID_CompanyField.getText(), 0);
+            }
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
             Scene scene = new Scene(root, 883, 400);
@@ -99,7 +106,7 @@ public class ModifyPartScreenController implements Initializable {
             modPartSaveButton.setOnAction(e -> {
                 try {
                     onClick2Mod(e);
-                } catch (IOException ex) {
+                } catch (IOException | SQLException ex) {
                     throw new RuntimeException(ex);
                 }
             });

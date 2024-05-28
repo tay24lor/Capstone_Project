@@ -63,4 +63,6 @@
     <TextField fx:id="productSearch" layoutX="682.0" layoutY="31.0" promptText="Search by ID or name..." />
     <Button fx:id="prodSearchButton" layoutX="831.0" layoutY="31.0" mnemonicParsing="false" onAction="#displayProdSearch" prefHeight="25.0" prefWidth="38.0" text="&gt;&gt;" />
    <Button fx:id="partSearchButton" layoutX="397.0" layoutY="31.0" mnemonicParsing="false" onAction="#displayPartSearch" prefHeight="25.0" prefWidth="38.0" text="&gt;&gt;" />
+   <Button layoutX="654.0" layoutY="354.0" mnemonicParsing="false" onAction="#onClick2ViewReports" text="Reports" />
+   <Button fx:id="sampleButton" layoutX="387.0" layoutY="354.0" mnemonicParsing="false" onAction="#loadSamples" text="Add Sample Data" />
 </AnchorPane>
