@@ -13,4 +13,8 @@ public class InHousePart extends Part {
     public void setMachineCode(int machineCode) {
         this.machineCode = String.valueOf(machineCode);
     }
+
+    public static InHousePart copy(Part part) {
+        return new InHousePart(part.getId(), part.getName(), part.getPrice(), part.getStock(), part.getMin(), part.getMax());
+    }
 }

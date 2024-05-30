@@ -15,4 +15,8 @@ public class OutSourcedPart extends Part{
     public String getCompanyName() {
         return companyName;
     }
+
+    public static OutSourcedPart copy(Part part) {
+        return new OutSourcedPart(part.getId(), part.getName(), part.getPrice(), part.getStock(), part.getMin(), part.getMax());
+    }
 }

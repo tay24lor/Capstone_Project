@@ -109,6 +109,14 @@ public class PartDAO {
         preparedStatement.setInt(10, part.getId());
         preparedStatement.executeUpdate();
     }
+
+    public static void updateStock(int id, int newAmount) throws SQLException {
+        String updateStmt = "UPDATE parts SET stock = ? WHERE id = ?";
+        PreparedStatement preparedStatement = SQLite.conn.prepareStatement(updateStmt);
+        preparedStatement.setInt(1, newAmount);
+        preparedStatement.setInt(2, id);
+        preparedStatement.executeUpdate();
+    }
     public static void deletePart(int id) throws SQLException {
         String deleteStmt = "DELETE FROM parts WHERE id = " + id + ";";
         Statement stmt = SQLite.conn.createStatement();
