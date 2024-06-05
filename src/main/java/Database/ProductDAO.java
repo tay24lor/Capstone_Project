@@ -2,6 +2,7 @@ package Database;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import model.Part;
 import model.Product;
 
 import java.sql.PreparedStatement;
@@ -41,8 +42,13 @@ public class ProductDAO {
             throw new RuntimeException(e);
         }
     }
-
     public static ObservableList<Product> getProducts() { return products; }
+
+    /*public static ObservableList<Part> getAssociatedParts(int prodId) throws SQLException {
+        ObservableList<Part> parts = FXCollections.observableArrayList();
+        Statement statement = SQLite.conn.createStatement();
+        String query = "SELECT * FROM parts WHERE"
+    }*/
 
     /**
      * Search for products by ID
@@ -72,6 +78,14 @@ public class ProductDAO {
             }
         }
         return results;
+    }
+    public static int getLatestId() throws SQLException {
+        int id;
+        Statement statement = SQLite.conn.createStatement();
+        String query = "SELECT max(id) FROM products;";
+        ResultSet resultSet = statement.executeQuery(query);
+        id = resultSet.getInt(1);
+        return id + 1;
     }
 
     public static int getProductsSize() throws SQLException {
@@ -114,5 +128,24 @@ public class ProductDAO {
         String deleteStmt = "DELETE FROM products WHERE id = " + id + ";";
         Statement stmt = SQLite.conn.createStatement();
         stmt.execute(deleteStmt);
+    }
+    public static void insertAssociatedPart(Product product, Part part) throws SQLException {
+        Statement statement = SQLite.conn.createStatement();
+        String query = "SELECT count FROM parts_to_products WHERE part_id = " + part.getId();
+        ResultSet resultSet = statement.executeQuery(query);
+        int count = 0;
+
+        while (resultSet.next()) {
+            count = resultSet.getInt("count");
+        }
+
+        String insertQuery = "INSERT INTO parts_to_products (prod_id, part_id, count) VALUES (?, ?, ?);";
+        PreparedStatement preparedStatement = SQLite.conn.prepareStatement(insertQuery);
+        preparedStatement.setInt(1, product.getId());
+        preparedStatement.setInt(2, part.getId());
+        preparedStatement.setInt(3, count + 1);
+        preparedStatement.executeUpdate();
+
+        PartDAO.updateStock(part.getId(), part.getStock() - 1);
     }
 }

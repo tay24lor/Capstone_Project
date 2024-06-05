@@ -1,11 +1,11 @@
 package model;
 
-public class OutSourcedPart extends Part{
+public class OutSourcedPart extends Part {
 
     private String companyName;
 
-    public OutSourcedPart(Integer id, String name, double price, int stock, int min, int max) {
-        super(id, name, price, stock, min, max);
+    public OutSourcedPart(Integer id, String name, double price, int stock, int min, int max, int prodID) {
+        super(id, name, price, stock, min, max, prodID, "");
     }
 
     public void setCompanyName(String companyName) {
@@ -14,9 +14,5 @@ public class OutSourcedPart extends Part{
 
     public String getCompanyName() {
         return companyName;
-    }
-
-    public static OutSourcedPart copy(Part part) {
-        return new OutSourcedPart(part.getId(), part.getName(), part.getPrice(), part.getStock(), part.getMin(), part.getMax());
     }
 }

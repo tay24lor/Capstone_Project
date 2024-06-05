@@ -17,6 +17,8 @@ import model.Part;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class AddPartScreenController {
@@ -54,11 +56,12 @@ public class AddPartScreenController {
             Part part;
             if (inHouseButton.isSelected()) {
                 part = setIHStats();
-                PartDAO.insert(part, Integer.parseInt(machineID_CompanyField.getText()), "", 0);
+                PartDAO.insert(part, Integer.parseInt(machineID_CompanyField.getText()), "");
+
             }
             else if (outsourcedButton.isSelected()) {
                 part = setOSStats();
-                PartDAO.insert(part, 0, machineID_CompanyField.getText(), 0);
+                PartDAO.insert(part, 0, machineID_CompanyField.getText());
 
             }
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
@@ -79,22 +82,23 @@ public class AddPartScreenController {
             });
         }
     }
-    private InHousePart setIHStats() {
-        InHousePart part = new InHousePart(0, "", 0.00, 0, 0, 0);
-        part.setId(PartDAO.getParts().size() + 1);
+    private InHousePart setIHStats() throws SQLException {
+        InHousePart part = new InHousePart(0, "", 0.00, 0, 0, 0, -1);
+        part.setId(PartDAO.getLatestId());
         part.setName(nameField.getText()); part.setPrice(Double.parseDouble(priceField.getText()));
         part.setStock(Integer.parseInt(stockField.getText())); part.setMin(Integer.parseInt(minField.getText()));
         part.setMax(Integer.parseInt(maxField.getText())); part.setMachineCode(Integer.parseInt(machineID_CompanyField.getText()));
-
+        part.setDate(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
         return part;
 
     }
-    private OutSourcedPart setOSStats() {
-        OutSourcedPart part = new OutSourcedPart(0, "", 0.00, 0, 0, 0);
-        part.setId(PartDAO.getParts().size() + 1);
+    private OutSourcedPart setOSStats() throws SQLException {
+        OutSourcedPart part = new OutSourcedPart(0, "", 0.00, 0, 0, 0, -1);
+        part.setId(PartDAO.getLatestId());
         part.setName(nameField.getText()); part.setPrice(Double.parseDouble(priceField.getText()));
         part.setStock(Integer.parseInt(stockField.getText())); part.setMin(Integer.parseInt(minField.getText()));
         part.setMax(Integer.parseInt(maxField.getText())); part.setCompanyName(machineID_CompanyField.getText());
+        part.setDate(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
 
         return part;
     }

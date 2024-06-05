@@ -2,8 +2,6 @@ package com.example.software_1_project;
 
 import Database.PartDAO;
 import Database.ProductDAO;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -18,27 +16,29 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Border;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
-import model.*;
+import model.Inventory;
+import model.Part;
+import model.Product;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Array;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Objects;
+import java.util.ResourceBundle;
 
 public class AddProductScreenController implements Initializable {
 
-    private final Product product = new Product(0, "", 0.00, 0, 0, 0);
+    private final Product product = new Product(ProductDAO.getLatestId(), "", 0.00, 0, 0, 0);
     public TableView<Part> prodPartTable;
     public TableColumn<Part, Integer> partIDCol;
     public TableColumn<Part, String> partNameCol;
     public TableColumn<Part, Integer> invLevelCol;
     public TableColumn<Part, Double> priceCol;
-    public TableView<List<StringProperty>> partsLinkedTable;
-    public TableColumn<List<StringProperty>, String> linkPartIDCol;
-    public TableColumn<List<StringProperty>, String> linkPartNameCol;
-    public TableColumn<List<StringProperty>, String> linkInvLvlCol;
-    public TableColumn<List<StringProperty>, String> linkCostCol;
+    public TableView<Part> partsLinkedTable;
+    public TableColumn<Part, Integer> linkPartIDCol;
+    public TableColumn<Part, String> linkPartNameCol;
+    public TableColumn<Part, String> linkInvLvlCol;
+    public TableColumn<Part, String> linkCostCol;
     public TextField prodIDField;
     public TextField prodNameField;
     public TextField prodStockField;
@@ -52,37 +52,38 @@ public class AddProductScreenController implements Initializable {
     public Label noPartToAddLabel;
     public Label noPartToRemoveLabel;
     public ObservableList<Part> partSearchList;
-    public ObservableList<List<StringProperty>> data = FXCollections.observableArrayList();
+    private final ObservableList<Part> assocParts = FXCollections.observableArrayList();
+    private final ObservableList<Part> parts = FXCollections.observableArrayList();
 
-    public int linkedParts = 0;
+    public AddProductScreenController() throws SQLException {
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        if (!(PartDAO.getParts() == null)) {
+
+        parts.addAll(PartDAO.getParts());
+        System.out.println("Prod ID: " + product.getId());
+        if (!(parts.isEmpty())) {
             partIDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
             partNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
             invLevelCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
             priceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
 
-            /*linkPartIDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
+            linkPartIDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
             linkPartNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
             linkInvLvlCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
-            linkCostCol.setCellValueFactory(new PropertyValueFactory<>("price"));*/
+            linkCostCol.setCellValueFactory(new PropertyValueFactory<>("price"));
 
-            linkPartIDCol.setCellValueFactory(data -> data.getValue().get(0));
-            linkPartNameCol.setCellValueFactory(data -> data.getValue().get(1));
-            linkInvLvlCol.setCellValueFactory(data -> data.getValue().get(2));
-            linkCostCol.setCellValueFactory(data -> data.getValue().get(3));
-
-            prodPartTable.setItems(PartDAO.getParts());
+            prodPartTable.setItems(parts);
         }
     }
-    public void onClick2Cancel(ActionEvent actionEvent) throws IOException {
-        for (Part p : product.getAllAssociatedParts()) {
-            Inventory.addPart(p);
+    public void onClick2Cancel(ActionEvent actionEvent) throws IOException, SQLException {
+        for (Part p : PartDAO.getAsscParts(product)) {
+            PartDAO.updateProdId(p, -1);
         }
 
-        product.getAllAssociatedParts().clear();
+        //product.getAllAssociatedParts().clear();
+        setTables();
 
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
@@ -94,11 +95,14 @@ public class AddProductScreenController implements Initializable {
 
     public void onClick2Save(ActionEvent actionEvent) throws IOException, SQLException {
         if (validateFields()) {
-            product.setId(ProductDAO.getProducts().size() + 1);
+            product.setId(ProductDAO.getLatestId());
             product.setName(prodNameField.getText()); product.setStock(Integer.parseInt(prodStockField.getText()));
             product.setPrice(Double.parseDouble(prodPriceField.getText())); product.setMax(Integer.parseInt(prodMaxField.getText()));
             product.setMin(Integer.parseInt(prodMinField.getText()));
 
+            for (Part part : assocParts) {
+                PartDAO.updateProdId(part, product.getId());
+            }
             ProductDAO.insert(product);
 
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
@@ -120,46 +124,20 @@ public class AddProductScreenController implements Initializable {
         }
     }
 
-    private void generateID(Product product) {
-        int id = 0;
-        for (Product p : Inventory.getAllProducts()) {
-            id = p.getId();
-        }
-        id++;
-        product.setId(id);
-    }
-
-    public void add2PartsLinked() throws SQLException {
+    public void add2PartsLinked() {
         Part selectedPart = prodPartTable.getSelectionModel().getSelectedItem();
 
-        List<StringProperty> row = new ArrayList<>();
-
         if (!(selectedPart == null)) {
-
-            noPartToAddLabel.setText("");
-            linkedParts++;
-            PartDAO.updateStock(selectedPart.getId(), selectedPart.getStock() - 1);
-
-            row.add(0, new SimpleStringProperty(String.valueOf(selectedPart.getId())));
-            row.add(1, new SimpleStringProperty(selectedPart.getName()));
-            row.add(2, new SimpleStringProperty(String.valueOf(linkedParts)));
-            row.add(3, new SimpleStringProperty(String.valueOf(selectedPart.getPrice())));
-
-            //int total = selectedPart.getStock() + linkedParts;
-
-            data.add(row);
-
-            product.addAssociatePart(selectedPart);
-
-            //Inventory.getAllParts().remove(selectedPart);
-            setTables();
+            assocParts.add(selectedPart);
+            parts.remove(selectedPart);
         }
         else {
             noPartToAddLabel.setText("No part selected...");
         }
+        setTables();
     }
-    public void removeAssocPart() {
-        /*noPartToRemoveLabel.setText("");
+    public void removeAssocPart() throws SQLException {
+        noPartToRemoveLabel.setText("");
         alert.setAlertType(Alert.AlertType.CONFIRMATION);
         Part selectedPart = partsLinkedTable.getSelectionModel().getSelectedItem();
         if (!(selectedPart == null)) {
@@ -167,8 +145,9 @@ public class AddProductScreenController implements Initializable {
             alert.showAndWait();
 
             if (alert.getResult() == ButtonType.OK) {
-                Inventory.getAllParts().add(selectedPart);
-                product.deleteAssociatedPart(selectedPart);
+                PartDAO.updateProdId(selectedPart, -1);
+                parts.add(selectedPart);
+                assocParts.remove(selectedPart);
                 setTables();
             }
             else {
@@ -177,13 +156,18 @@ public class AddProductScreenController implements Initializable {
         }
         else {
             noPartToRemoveLabel.setText("No part selected...");
-        }*/
+        }
     }
     public void setTables() {
-        partsLinkedTable.setItems(data);
+        partsLinkedTable.setItems(assocParts);
         PartDAO.getParts().clear();
         PartDAO.setParts();
-        prodPartTable.setItems(PartDAO.getParts());
+        prodPartTable.setItems(parts);
+        partsLinkedTable.getSortOrder().add(linkPartIDCol);
+        prodPartTable.getSortOrder().add(partIDCol);
+        partsLinkedTable.sort();
+        prodPartTable.sort();
+
     }
 
     public void displayProdPartSearch() {

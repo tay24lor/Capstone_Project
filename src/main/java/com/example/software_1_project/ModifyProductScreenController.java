@@ -1,5 +1,7 @@
 package com.example.software_1_project;
 
+import Database.PartDAO;
+import Database.SQLite;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -20,49 +22,113 @@ import model.Product;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
+/** This class controls the Modify Product screen. */
 public class ModifyProductScreenController implements Initializable {
 
-    private static Product prod;
-    private final Product product = new Product(0,"",0.00,0,0,0);
-    public TextField modProdIDField;
-    public TextField modProdNameField;
-    public TextField modProdStockField;
-    public TextField modProdPriceField;
-    public TextField modProdMaxField;
-    public TextField modProdMinField;
-    public TableView<Part> modProdPartTable = new TableView<>();
-    public TableColumn<Part, Integer> modProdPartIDCol;
-    public TableColumn<Part, String> modProdPartNameCol;
-    public TableColumn<Part, Integer> modProdPartStockCol;
-    public TableColumn<Part, Double> modProdPartCostCol;
-    public TableView<Part> modAscPartTable = new TableView<>();
-    public TableColumn<Part, Integer> modAscPartIDCol;
-    public TableColumn<Part, String> modAscPartNameCol;
-    public TableColumn<Part, Integer> modAscPartStockCol;
-    public TableColumn<Part, Double> modAscPartCostCol;
-    public TextField modProdPartSearch;
-    public Button modProdPartSearchButton;
-    public Alert alert = new Alert(Alert.AlertType.NONE);
-    public Button modProdSaveButton;
-    public Label noPartToRemoveLabel;
-    public Label noPartToAddLabel;
-    public ObservableList<Part> partSearchList = FXCollections.observableArrayList();
+    /** The modified product. */
+    private final Product NEWPRODUCT = new Product(0,"",0.00,0,0,0);
 
+    /** The product to be modified. */
+    private static Product oldProd;
+
+    /** Product ID field. */
+    public TextField modProdIDField;
+
+    /** Product name field. */
+    public TextField modProdNameField;
+
+    /** Product stock level field. */
+    public TextField modProdStockField;
+
+    /** Product cost field. */
+    public TextField modProdPriceField;
+
+    /** Product maximum stock field. */
+    public TextField modProdMaxField;
+
+    /** Product minimum stock field. */
+    public TextField modProdMinField;
+
+    /** Table for all parts available. */
+    public TableView<Part> modProdPartTable = new TableView<>();
+
+    /** Part ID column. */
+    public TableColumn<Part, Integer> modProdPartIDCol;
+
+    /** Part name column. */
+    public TableColumn<Part, String> modProdPartNameCol;
+
+    /** Part stock level column. */
+    public TableColumn<Part, Integer> modProdPartStockCol;
+
+    /** Part cost column. */
+    public TableColumn<Part, Double> modProdPartCostCol;
+
+    /** Table for parts associated with current product. */
+    public TableView<Part> modAscPartTable = new TableView<>();
+
+    /** Associated part ID column. */
+    public TableColumn<Part, Integer> modAscPartIDCol;
+
+    /** Associated part name column. */
+    public TableColumn<Part, String> modAscPartNameCol;
+
+    /** Associated part stock level column. */
+    public TableColumn<Part, Integer> modAscPartStockCol;
+
+    /** Associated part cost column. */
+    public TableColumn<Part, Double> modAscPartCostCol;
+
+    /** Search bar for parts. */
+    public TextField modProdPartSearch;
+
+    /** Calls the search method. */
+    public Button modProdPartSearchButton;
+
+    /** Alert for search mismatches and */
+    public Alert alert = new Alert(Alert.AlertType.NONE);
+
+    /** Calls the save product method. */
+    public Button modProdSaveButton;
+
+    /** Warning label for no part selected alert. */
+    public Label noPartToRemoveLabel;
+
+    /** Warning label for no part selected alert. */
+    public Label noPartToAddLabel;
+
+    /** List for search results. */
+    public ObservableList<Part> partSearchList = FXCollections.observableArrayList();
+    private ObservableList<Part> parts = FXCollections.observableArrayList();
+
+    private ObservableList<Part> assocParts = FXCollections.observableArrayList();
+
+
+    /** This method is used to send the selected product object from the main screen to the Modify Product screen. */
     public static void sendProdData(Product selectedItem) {
-        prod = selectedItem;
+        oldProd = selectedItem;
     }
 
+    /** This initializes the Modify Product fields with the selected product's data. */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        modProdIDField.setText(String.valueOf(prod.getId()));
-        modProdNameField.setText(prod.getName());
-        modProdStockField.setText(String.valueOf(prod.getStock()));
-        modProdPriceField.setText(String.valueOf(prod.getPrice()));
-        modProdMaxField.setText(String.valueOf(prod.getMax()));
-        modProdMinField.setText(String.valueOf(prod.getMin()));
+        /*try {
+            SQLite.conn.setAutoCommit(false);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }*/
+        /*parts.setAll(PartDAO.getParts());
+        asscParts.setAll(PartDAO.getAsscParts(oldProd));*/
+        modProdIDField.setText(String.valueOf(oldProd.getId()));
+        modProdNameField.setText(oldProd.getName());
+        modProdStockField.setText(String.valueOf(oldProd.getStock()));
+        modProdPriceField.setText(String.valueOf(oldProd.getPrice()));
+        modProdMaxField.setText(String.valueOf(oldProd.getMax()));
+        modProdMinField.setText(String.valueOf(oldProd.getMin()));
 
         modProdPartIDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         modProdPartNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -74,10 +140,32 @@ public class ModifyProductScreenController implements Initializable {
         modAscPartStockCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
         modAscPartCostCol.setCellValueFactory(new PropertyValueFactory<>("price"));
 
-        modProdPartTable.setItems(Inventory.getAllParts());
-        modAscPartTable.setItems(prod.getAllAssociatedParts());
+        System.out.println("SIZE in modprod 1: " + parts.size());
+
+        parts.clear();
+        parts = PartDAO.getParts();
+        System.out.println("SIZE in modprod 2: " + parts.size());
+
+        modProdPartTable.getItems().clear();
+        modProdPartTable.setItems(parts);
+
+        /*for (Part part : parts) {
+            if (part.getProdID() == oldProd.getId()) {
+                asscParts.add(part);
+            }
+            System.out.println(part.getProdID());
+
+        }*/
+        modAscPartTable.getItems().clear();
+        assocParts = PartDAO.getAsscParts(oldProd);
+        modAscPartTable.setItems(assocParts);
     }
-    public void onClick2Cancel(ActionEvent actionEvent) throws IOException {
+
+    /** Cancels product modification. */
+    public void onClick2Cancel(ActionEvent actionEvent) throws IOException, SQLException {
+        parts.clear();
+        assocParts.clear();
+        modAscPartTable.getItems().clear();
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
         Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
         Scene scene = new Scene(root, 883, 400);
@@ -86,19 +174,19 @@ public class ModifyProductScreenController implements Initializable {
         stage.show();
     }
 
-    public void onClick2SaveModifyProduct(ActionEvent actionEvent) throws IOException {
+    /** Saves product modification. */
+    public void onClick2SaveModifyProduct(ActionEvent actionEvent) throws IOException, SQLException {
         if (validateFields()) {
-            product.setId(Integer.parseInt(modProdIDField.getText()));
-            product.setName(modProdNameField.getText());
-            product.setStock(Integer.parseInt(modProdStockField.getText()));
-            product.setPrice(Double.parseDouble(modProdPriceField.getText()));
-            product.setMax(Integer.parseInt(modProdMaxField.getText()));
-            product.setMin(Integer.parseInt(modProdMinField.getText()));
+            NEWPRODUCT.setId(Integer.parseInt(modProdIDField.getText()));
+            NEWPRODUCT.setName(modProdNameField.getText());
+            NEWPRODUCT.setStock(Integer.parseInt(modProdStockField.getText()));
+            NEWPRODUCT.setPrice(Double.parseDouble(modProdPriceField.getText()));
+            NEWPRODUCT.setMax(Integer.parseInt(modProdMaxField.getText()));
+            NEWPRODUCT.setMin(Integer.parseInt(modProdMinField.getText()));
 
-            for (Part part : prod.getAllAssociatedParts()) {
-                product.addAssociatePart(part);
+            for (Part part : assocParts) {
+                PartDAO.updateProdId(part, NEWPRODUCT.getId());
             }
-            Inventory.updateProduct(Inventory.getAllProducts().indexOf(prod), product);
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
             Scene scene = new Scene(root, 883, 400);
@@ -111,19 +199,20 @@ public class ModifyProductScreenController implements Initializable {
             modProdSaveButton.setOnAction(e -> {
                 try {
                     onClick2SaveModifyProduct(e);
-                } catch (IOException ex) {
+                } catch (IOException | SQLException ex) {
                     throw new RuntimeException(ex);
                 }
             });
         }
     }
 
+    /** This method associates parts with the current product. */
     public void modProdAddAscPart() {
         Part selectedPart = modProdPartTable.getSelectionModel().getSelectedItem();
         if (!(selectedPart == null)) {
             noPartToAddLabel.setText("");
-            prod.addAssociatePart(selectedPart);
-            Inventory.getAllParts().remove(selectedPart);
+            assocParts.add(selectedPart);
+            parts.remove(selectedPart);
             setTables();
         }
         else {
@@ -131,7 +220,8 @@ public class ModifyProductScreenController implements Initializable {
         }
     }
 
-    public void modProdRemovePart() {
+    /** This method removes selected part association from the current product. */
+    public void modProdRemovePart() throws SQLException {
         noPartToRemoveLabel.setText("");
         alert.setAlertType(Alert.AlertType.CONFIRMATION);
         Part selectedPart = modAscPartTable.getSelectionModel().getSelectedItem();
@@ -140,8 +230,9 @@ public class ModifyProductScreenController implements Initializable {
             alert.showAndWait();
 
             if (alert.getResult() == ButtonType.OK) {
-                Inventory.getAllParts().add(selectedPart);
-                prod.deleteAssociatedPart(selectedPart);
+                PartDAO.updateProdId(selectedPart, -1);
+                parts.add(selectedPart);
+                assocParts.remove(selectedPart);
                 setTables();
             }
             else {
@@ -152,17 +243,19 @@ public class ModifyProductScreenController implements Initializable {
             noPartToRemoveLabel.setText("No part selected...");
         }
     }
+
+    /** This updates the tables with current inventory information. */
     public void setTables() {
-        modAscPartTable.setItems(prod.getAllAssociatedParts());
-        modProdPartTable.setItems(Inventory.getAllParts());
+        modAscPartTable.setItems(assocParts);
+        modProdPartTable.setItems(parts);
     }
 
+    /** This method displays part search results for the user. */
     public void displayModProdPartSearch() {
 
         String search = modProdPartSearch.getText();
 
         if (!search.isEmpty()) {
-
 
             try {
                 partSearchList = Inventory.lookupPart(search);
@@ -171,7 +264,7 @@ public class ModifyProductScreenController implements Initializable {
                     partSearchList.add(p);
                 }
             } catch (NumberFormatException ignored) {}
-            
+
             if (partSearchList.isEmpty()) {
                 sendWarning();
             }
@@ -184,6 +277,7 @@ public class ModifyProductScreenController implements Initializable {
         }
     }
 
+    /** Alerts the user to search mismatches. */
     public void sendWarning() {
         Alert alert = new Alert(Alert.AlertType.NONE);
         EventHandler<ActionEvent> searchWarning = actionEvent -> {
@@ -195,6 +289,8 @@ public class ModifyProductScreenController implements Initializable {
         modProdPartSearchButton.fire();
         modProdPartSearchButton.setOnAction(a -> displayModProdPartSearch());
     }
+
+    /** This checks if product fields are valid. */
     private boolean validateFields() {
         try {
             Double.parseDouble(modProdPriceField.getText());
@@ -237,6 +333,8 @@ public class ModifyProductScreenController implements Initializable {
         }
         return true;
     }
+
+    /** This alerts the user to validation errors. */
     public void sendExceptionWarning() {
         EventHandler<ActionEvent> fieldWarning = actionEvent -> {
             alert.setAlertType(Alert.AlertType.WARNING);
@@ -245,8 +343,9 @@ public class ModifyProductScreenController implements Initializable {
         modProdSaveButton.setOnAction(fieldWarning);
         modProdSaveButton.fire();
         alert.setOnCloseRequest(e -> clearFields());
-
     }
+
+    /** This clears the highlighting from invalid fields after the alert is acknowledged by the user. */
     private void clearFields() {
         modProdNameField.setBorder(Border.EMPTY);
         modProdStockField.setBorder(Border.EMPTY);

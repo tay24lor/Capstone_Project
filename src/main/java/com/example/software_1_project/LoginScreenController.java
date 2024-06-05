@@ -10,8 +10,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class LoginScreenController {
@@ -27,6 +31,7 @@ public class LoginScreenController {
         String pass = passField.getText();
 
         if (UserDAO.check(name, pass)) {
+            writeToLog("SUCCESS");
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
             Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
             Scene scene = new Scene(root, 883, 400);
@@ -35,6 +40,7 @@ public class LoginScreenController {
             stage.show();
         }
         else {
+            writeToLog("FAIL");
             alert.setAlertType(Alert.AlertType.WARNING);
             alert.setContentText("Username or Password not found.");
             alert.showAndWait();
@@ -52,6 +58,17 @@ public class LoginScreenController {
         if (alert.getResult() == ButtonType.OK) {
             SQLite.close();
             System.exit(0);
+        }
+    }
+    public void writeToLog(String status) {
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter("src/login_activity.txt", true));
+            writer.write("[Login Activity] [" + status + "] USERNAME: " + userField.getText() + " TIMESTAMP: " + ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+            writer.newLine();
+            writer.close();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

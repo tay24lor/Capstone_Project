@@ -50,7 +50,6 @@ public class MainScreenController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
         generatePartTable();
         generateProductTable();
         System.out.println(PartDAO.getParts().size());
@@ -63,6 +62,7 @@ public class MainScreenController implements Initializable {
         partTable.getItems().clear();
         PartDAO.getParts().clear();
         PartDAO.setParts();
+        System.out.println("SIZE in main screen: " + PartDAO.getParts().size());
 
         partIDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         partNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -70,6 +70,7 @@ public class MainScreenController implements Initializable {
         priceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
 
         partTable.setItems(PartDAO.getParts());
+        System.out.println(PartDAO.getParts().get(0).getDate());
     }
 
     /**
@@ -231,6 +232,7 @@ public class MainScreenController implements Initializable {
                 partTable.getItems().remove(selectedItem);
                 warningLabel.setText("");
                 PartDAO.deletePart(selectedItem.getId());
+                generatePartTable();
                 return true;
             }
             else {
@@ -254,7 +256,7 @@ public class MainScreenController implements Initializable {
 
         if (checkObjectSelected(selectedItem)) {
 
-            if (selectedItem.getAllAssociatedParts().isEmpty()) {
+            if ( (PartDAO.getAsscParts(selectedItem).isEmpty()) ) {
                 alert.setAlertType(Alert.AlertType.CONFIRMATION);
                 alert.setContentText("Are you sure you want to delete this product?");
                 alert.showAndWait();
@@ -319,17 +321,17 @@ public class MainScreenController implements Initializable {
     public void onClick2ViewReports(ActionEvent actionEvent) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("reportsScreen.fxml")));
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        Scene scene = new Scene(root, 900, 530);
+        Scene scene = new Scene(root, 740, 580);
         stage.setScene(scene);
         stage.show();
     }
 
     public void loadSamples() throws SQLException {
         if (PartDAO.getParts().isEmpty() && Inventory.getAllProducts().isEmpty()) {
-            InHousePart part1 = new InHousePart(1, "Pedals", 1.00, 1, 1, 20);
-            InHousePart part2 = new InHousePart(2, "Chains", 1.00, 1, 1, 20);
-            OutSourcedPart part3 = new OutSourcedPart(3, "Seats", 1.00, 1, 1, 20);
-            OutSourcedPart part4 = new OutSourcedPart(4, "Handlebars", 1.00, 1, 1, 20);
+            InHousePart part1 = new InHousePart(1, "Pedals", 1.00, 1, 1, 20, 0);
+            InHousePart part2 = new InHousePart(2, "Chains", 1.00, 1, 1, 20, 0);
+            OutSourcedPart part3 = new OutSourcedPart(3, "Seats", 1.00, 1, 1, 20, 0);
+            OutSourcedPart part4 = new OutSourcedPart(4, "Handlebars", 1.00, 1, 1, 20, 0);
 
             part1.setMachineCode(101);
             part2.setMachineCode(102);
@@ -337,10 +339,10 @@ public class MainScreenController implements Initializable {
             part3.setCompanyName("Bike Co.");
             part4.setCompanyName("Chains & Things");
 
-            PartDAO.insert(part1, part1.getMachineCode(), "", 0);
-            PartDAO.insert(part2, part2.getMachineCode(), "", 0);
-            PartDAO.insert(part3, 0, part3.getCompanyName(), 0);
-            PartDAO.insert(part4, 0, part4.getCompanyName(), 0);
+            PartDAO.insert(part1, part1.getMachineCode(), "");
+            PartDAO.insert(part2, part2.getMachineCode(), "");
+            PartDAO.insert(part3, 0, part3.getCompanyName());
+            PartDAO.insert(part4, 0, part4.getCompanyName());
 
             Product prod1 = new Product(1, "Adult Bike", 200.00, 20, 1, 35);
             Product prod2 = new Product(2, "Kid Bike", 100.00, 10, 1, 20);
@@ -348,10 +350,8 @@ public class MainScreenController implements Initializable {
             ProductDAO.insert(prod1);
             ProductDAO.insert(prod2);
 
-            partTable.setItems(PartDAO.getParts());
-            prodTable.setItems(ProductDAO.getProducts());
-
-
+            generatePartTable();
+            generateProductTable();
         }
         else {
             alert.setAlertType(Alert.AlertType.WARNING);

@@ -1,6 +1,7 @@
 package com.example.software_1_project;
 
 import Database.PartDAO;
+import Database.SQLite;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -13,7 +14,6 @@ import javafx.scene.layout.Border;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import model.InHousePart;
-import model.Inventory;
 import model.OutSourcedPart;
 import model.Part;
 
@@ -42,6 +42,13 @@ public class ModifyPartScreenController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        /*try {
+            SQLite.conn.setAutoCommit(false);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }*/
+
         if (modPart.getClass().equals(InHousePart.class))
             inHouseButton.fire();
         else if (modPart.getClass().equals(OutSourcedPart.class))
@@ -64,13 +71,14 @@ public class ModifyPartScreenController implements Initializable {
     public static void sendPartData(Part selectedItem) {
         modPart = selectedItem;
     }
-    public void onClick2Exit(ActionEvent actionEvent) throws IOException {
+    public void onClick2Exit(ActionEvent actionEvent) throws IOException, SQLException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
         Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
         Scene scene = new Scene(root, 883, 400);
         stage.setTitle("Main Screen");
         stage.setScene(scene);
         stage.show();
+        //SQLite.conn.rollback();
     }
     public void onClick2OutSrc() {
         outsourcedButton.setSelected(true);
@@ -88,12 +96,13 @@ public class ModifyPartScreenController implements Initializable {
         if (validateFields()) {
             if (inHouseButton.isSelected()) {
                 part = setIHStats();
-                PartDAO.update(part, Integer.parseInt(machineID_CompanyField.getText()), "", 0);
+                PartDAO.update(part, Integer.parseInt(machineID_CompanyField.getText()), "", -1);
             }
             else if (outsourcedButton.isSelected()) {
                 part = setOSStats();
-                PartDAO.update(part, 0, machineID_CompanyField.getText(), 0);
+                PartDAO.update(part, 0, machineID_CompanyField.getText(), -1);
             }
+            //SQLite.conn.commit();
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
             Scene scene = new Scene(root, 883, 400);
@@ -182,7 +191,7 @@ public class ModifyPartScreenController implements Initializable {
     }
 
     private InHousePart setIHStats() {
-        InHousePart part = new InHousePart(0, "", 0.00, 0, 0, 0);
+        InHousePart part = new InHousePart(0, "", 0.00, 0, 0, 0, 0);
         part.setId(modPart.getId());
         part.setName(nameField.getText()); part.setPrice(Double.parseDouble(priceField.getText()));
         part.setStock(Integer.parseInt(stockField.getText())); part.setMin(Integer.parseInt(minField.getText()));
@@ -190,7 +199,7 @@ public class ModifyPartScreenController implements Initializable {
         return part;
     }
     private OutSourcedPart setOSStats() {
-        OutSourcedPart part = new OutSourcedPart(0, "", 0.00, 0, 0, 0);
+        OutSourcedPart part = new OutSourcedPart(0, "", 0.00, 0, 0, 0, 0);
         part.setId(modPart.getId());
         part.setName(nameField.getText()); part.setPrice(Double.parseDouble(priceField.getText()));
         part.setStock(Integer.parseInt(stockField.getText())); part.setMin(Integer.parseInt(minField.getText()));
