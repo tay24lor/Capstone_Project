@@ -23,6 +23,7 @@ public class Product {
     private int stock;
     private int min;
     private int max;
+    private String dateTime;
 
     /**
      *
@@ -33,13 +34,14 @@ public class Product {
      * @param min minimum to set.
      * @param max maximum to set.
      */
-    public Product(int id, String name, Double price, int stock, int min, int max) {
+    public Product(int id, String name, Double price, int stock, int min, int max, String dateTime) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.stock = stock;
         this.min = min;
         this.max = max;
+        this.dateTime = dateTime;
     }
 
     /**
@@ -161,5 +163,10 @@ public class Product {
      */
     public ObservableList<Part> getAllAssociatedParts() throws SQLException {
         return PartDAO.getAsscParts(this);
+    }
+    public String getDate() { return dateTime; }
+
+    public void setDate(String dateTime) {
+        this.dateTime = String.valueOf(dateTime);
     }
 }

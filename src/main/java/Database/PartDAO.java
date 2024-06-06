@@ -84,6 +84,91 @@ public class PartDAO {
         return asscParts;
     }
 
+    public static ObservableList<Part> getInHouseParts() {
+        ObservableList<Part> inHouseParts = FXCollections.observableArrayList();
+
+        try {
+            Statement stmt = SQLite.conn.createStatement();
+            String query = "SELECT id, " +
+                    "              name, " +
+                    "              price, " +
+                    "              stock, " +
+                    "              min, " +
+                    "              max, " +
+                    "              machineCode, " +
+                    "              companyName, " +
+                    "              productID," +
+                    "              date_created" +
+                    "       FROM   parts" +
+                    "       WHERE machineCode > 0;";
+            ResultSet result = stmt.executeQuery(query);
+            while (result.next()) {
+                int id = result.getInt("id");
+                String name = result.getString("name");
+                double price = result.getDouble("price");
+                int stock = result.getInt("stock");
+                int min = result.getInt("min");
+                int max = result.getInt("max");
+                int machCode = result.getInt("machineCode");
+                int productID = result.getInt("productID");
+                String dateCreated = result.getString("date_created");
+
+
+                InHousePart ihPart = new InHousePart(id, name, price, stock, min, max, productID);
+                ihPart.setMachineCode(machCode);
+                ihPart.setDate(dateCreated);
+                inHouseParts.add(ihPart);
+
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return inHouseParts;
+    }
+    public static ObservableList<Part> getOutSourcedParts() {
+        ObservableList<Part> outSourcedParts = FXCollections.observableArrayList();
+
+        try {
+            Statement stmt = SQLite.conn.createStatement();
+            String query = "SELECT id, " +
+                    "              name, " +
+                    "              price, " +
+                    "              stock, " +
+                    "              min, " +
+                    "              max, " +
+                    "              machineCode, " +
+                    "              companyName, " +
+                    "              productID," +
+                    "              date_created" +
+                    "       FROM   parts" +
+                    "       WHERE machineCode < 1;";
+            ResultSet result = stmt.executeQuery(query);
+            while (result.next()) {
+                int id = result.getInt("id");
+                String name = result.getString("name");
+                double price = result.getDouble("price");
+                int stock = result.getInt("stock");
+                int min = result.getInt("min");
+                int max = result.getInt("max");
+                String compName = result.getString("companyName");
+                int productID = result.getInt("productID");
+                String dateCreated = result.getString("date_created");
+
+
+                OutSourcedPart osPart = new OutSourcedPart(id, name, price, stock, min, max, productID);
+                osPart.setCompanyName(compName);
+                osPart.setDate(dateCreated);
+                outSourcedParts.add(osPart);
+
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return outSourcedParts;
+    }
+
     public static Part lookupPart(int partID) {
         for (Part part : parts) {
             if (partID == part.getId()) {
@@ -104,25 +189,6 @@ public class PartDAO {
         return results;
     }
 
-    public static int getMachineCode(Part part) throws SQLException {
-        int code = 0;
-        Statement statement = SQLite.conn.createStatement();
-        String query = "SELECT machineCode FROM parts WHERE id = " + part.getId();
-        ResultSet resultSet = statement.executeQuery(query);
-        while (resultSet.next()) {
-            code = resultSet.getInt("machineCode");
-        }
-        return code;
-    }
-    public static String getCompany(Part part) throws SQLException {
-        String name = "";
-        Statement statement = SQLite.conn.createStatement();
-        String query = "SELECT companyName FROM parts WHERE id = " + part.getId();
-        ResultSet resultSet = statement.executeQuery(query);
-        while (resultSet.next())
-            name = resultSet.getString("companyName");
-        return name;
-    }
     public static int getLatestId() throws SQLException {
         int id;
         Statement statement = SQLite.conn.createStatement();
@@ -164,13 +230,6 @@ public class PartDAO {
         preparedStatement.executeUpdate();
     }
 
-    public static void updateStock(int id, int newAmount) throws SQLException {
-        String updateStmt = "UPDATE parts SET stock = ? WHERE id = ?";
-        PreparedStatement preparedStatement = SQLite.conn.prepareStatement(updateStmt);
-        preparedStatement.setInt(1, newAmount);
-        preparedStatement.setInt(2, id);
-        preparedStatement.executeUpdate();
-    }
     public static void updateProdId(Part part, int prodID) throws SQLException {
         part.setProdID(prodID);
         String updateStmt = "UPDATE parts SET productID = ? WHERE id = ?";

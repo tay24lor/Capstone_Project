@@ -34,7 +34,7 @@ public class LoginScreenController {
             writeToLog("SUCCESS");
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
             Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root, 883, 400);
+            Scene scene = new Scene(root, 1016, 639);
             stage.setTitle("Main Screen");
             stage.setScene(scene);
             stage.show();
@@ -49,7 +49,7 @@ public class LoginScreenController {
 
     /**
      * Exit program and close connection to database.
-     * @throws SQLException
+     * @throws SQLException exception to throw
      */
     public void closeProgram() throws SQLException {
         alert.setAlertType(Alert.AlertType.CONFIRMATION);

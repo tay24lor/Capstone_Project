@@ -23,12 +23,15 @@ import model.Product;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.Clock;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class AddProductScreenController implements Initializable {
 
-    private final Product product = new Product(ProductDAO.getLatestId(), "", 0.00, 0, 0, 0);
+    private final Product product = new Product(ProductDAO.getLatestId(), "", 0.00, 0, 0, 0, ZonedDateTime.now(Clock.systemUTC()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
     public TableView<Part> prodPartTable;
     public TableColumn<Part, Integer> partIDCol;
     public TableColumn<Part, String> partNameCol;
@@ -54,6 +57,9 @@ public class AddProductScreenController implements Initializable {
     public ObservableList<Part> partSearchList;
     private final ObservableList<Part> assocParts = FXCollections.observableArrayList();
     private final ObservableList<Part> parts = FXCollections.observableArrayList();
+
+    protected int x = 1016;
+    protected int y = 639;
 
     public AddProductScreenController() throws SQLException {
     }
@@ -81,13 +87,11 @@ public class AddProductScreenController implements Initializable {
         for (Part p : PartDAO.getAsscParts(product)) {
             PartDAO.updateProdId(p, -1);
         }
-
-        //product.getAllAssociatedParts().clear();
         setTables();
 
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        Scene scene = new Scene(root, 883, 400);
+        Scene scene = new Scene(root, x, y);
         stage.setTitle("Main Screen");
         stage.setScene(scene);
         stage.show();
@@ -107,7 +111,7 @@ public class AddProductScreenController implements Initializable {
 
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root, 883, 400);
+            Scene scene = new Scene(root, x, y);
             stage.setTitle("Main Screen");
             stage.setScene(scene);
             stage.show();

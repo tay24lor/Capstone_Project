@@ -2,7 +2,6 @@ package Database;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import model.Part;
 import model.Product;
 
 import java.sql.PreparedStatement;
@@ -22,7 +21,8 @@ public class ProductDAO {
                     "              price, " +
                     "              stock, " +
                     "              min, " +
-                    "              max " +
+                    "              max, " +
+                    "              date_created" +
                     "       FROM   products;";
             ResultSet result = stmt.executeQuery(query);
             while (result.next()) {
@@ -32,9 +32,10 @@ public class ProductDAO {
                 int stock = result.getInt("stock");
                 int min = result.getInt("min");
                 int max = result.getInt("max");
+                String dateCreated = result.getString("date_created");
 
                 if (products.size() != getProductsSize()) {
-                    Product product = new Product(id, name, price, stock, min, max);
+                    Product product = new Product(id, name, price, stock, min, max, dateCreated);
                     products.add(product);
                 }
             }
@@ -43,12 +44,6 @@ public class ProductDAO {
         }
     }
     public static ObservableList<Product> getProducts() { return products; }
-
-    /*public static ObservableList<Part> getAssociatedParts(int prodId) throws SQLException {
-        ObservableList<Part> parts = FXCollections.observableArrayList();
-        Statement statement = SQLite.conn.createStatement();
-        String query = "SELECT * FROM parts WHERE"
-    }*/
 
     /**
      * Search for products by ID
@@ -113,39 +108,19 @@ public class ProductDAO {
     }
 
     public static void update(Product product) throws SQLException {
-        String updateStmt = "UPDATE products SET id = ?, name = ?, price = ?, stock = ?, min = ?, max = ? WHERE id = ?";
+        String updateStmt = "UPDATE products SET name = ?, price = ?, stock = ?, min = ?, max = ? WHERE id = ?";
         PreparedStatement preparedStatement = SQLite.conn.prepareStatement(updateStmt);
-        preparedStatement.setInt(1, product.getId());
-        preparedStatement.setString(2, product.getName());
-        preparedStatement.setDouble(3, product.getPrice());
-        preparedStatement.setInt(4, product.getStock());
-        preparedStatement.setInt(5, product.getMin());
-        preparedStatement.setInt(6, product.getMax());
-        preparedStatement.setInt(10, product.getId());
+        preparedStatement.setString(1, product.getName());
+        preparedStatement.setDouble(2, product.getPrice());
+        preparedStatement.setInt(3, product.getStock());
+        preparedStatement.setInt(4, product.getMin());
+        preparedStatement.setInt(5, product.getMax());
+        preparedStatement.setInt(6, product.getId());
         preparedStatement.executeUpdate();
     }
     public static void delete(int id) throws SQLException {
         String deleteStmt = "DELETE FROM products WHERE id = " + id + ";";
         Statement stmt = SQLite.conn.createStatement();
         stmt.execute(deleteStmt);
-    }
-    public static void insertAssociatedPart(Product product, Part part) throws SQLException {
-        Statement statement = SQLite.conn.createStatement();
-        String query = "SELECT count FROM parts_to_products WHERE part_id = " + part.getId();
-        ResultSet resultSet = statement.executeQuery(query);
-        int count = 0;
-
-        while (resultSet.next()) {
-            count = resultSet.getInt("count");
-        }
-
-        String insertQuery = "INSERT INTO parts_to_products (prod_id, part_id, count) VALUES (?, ?, ?);";
-        PreparedStatement preparedStatement = SQLite.conn.prepareStatement(insertQuery);
-        preparedStatement.setInt(1, product.getId());
-        preparedStatement.setInt(2, part.getId());
-        preparedStatement.setInt(3, count + 1);
-        preparedStatement.executeUpdate();
-
-        PartDAO.updateStock(part.getId(), part.getStock() - 1);
     }
 }

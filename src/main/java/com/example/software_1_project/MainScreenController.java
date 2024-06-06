@@ -19,6 +19,11 @@ import model.*;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.sql.Time;
+import java.time.Clock;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -327,7 +332,7 @@ public class MainScreenController implements Initializable {
     }
 
     public void loadSamples() throws SQLException {
-        if (PartDAO.getParts().isEmpty() && Inventory.getAllProducts().isEmpty()) {
+        if (PartDAO.getParts().isEmpty() && ProductDAO.getProducts().isEmpty()) {
             InHousePart part1 = new InHousePart(1, "Pedals", 1.00, 1, 1, 20, 0);
             InHousePart part2 = new InHousePart(2, "Chains", 1.00, 1, 1, 20, 0);
             OutSourcedPart part3 = new OutSourcedPart(3, "Seats", 1.00, 1, 1, 20, 0);
@@ -344,8 +349,8 @@ public class MainScreenController implements Initializable {
             PartDAO.insert(part3, 0, part3.getCompanyName());
             PartDAO.insert(part4, 0, part4.getCompanyName());
 
-            Product prod1 = new Product(1, "Adult Bike", 200.00, 20, 1, 35);
-            Product prod2 = new Product(2, "Kid Bike", 100.00, 10, 1, 20);
+            Product prod1 = new Product(1, "Adult Bike", 200.00, 20, 1, 35, ZonedDateTime.now(Clock.systemUTC()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+            Product prod2 = new Product(2, "Kid Bike", 100.00, 10, 1, 20, ZonedDateTime.now(Clock.systemUTC()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
 
             ProductDAO.insert(prod1);
             ProductDAO.insert(prod2);

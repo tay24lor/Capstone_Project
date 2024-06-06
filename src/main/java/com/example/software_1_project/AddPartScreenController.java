@@ -17,6 +17,7 @@ import model.Part;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
@@ -35,6 +36,8 @@ public class AddPartScreenController {
     public ToggleGroup InOrOut;
     public Button addPartSaveButton;
     public Alert alert = new Alert(Alert.AlertType.NONE);
+    protected int x = 1016;
+    protected int y = 639;
 
     public void onClick2OutSrc() {
         makeIDLabel.setText("Company Name");
@@ -45,7 +48,7 @@ public class AddPartScreenController {
     public void onClick2Exit(ActionEvent actionEvent) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
         Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
-        Scene scene = new Scene(root, 883, 400);
+        Scene scene = new Scene(root, x, y);
         stage.setTitle("Main Screen");
         stage.setScene(scene);
         stage.show();
@@ -66,7 +69,7 @@ public class AddPartScreenController {
             }
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root, 883, 400);
+            Scene scene = new Scene(root, x, y);
             stage.setTitle("Main Screen");
             stage.setScene(scene);
             stage.show();
@@ -88,7 +91,7 @@ public class AddPartScreenController {
         part.setName(nameField.getText()); part.setPrice(Double.parseDouble(priceField.getText()));
         part.setStock(Integer.parseInt(stockField.getText())); part.setMin(Integer.parseInt(minField.getText()));
         part.setMax(Integer.parseInt(maxField.getText())); part.setMachineCode(Integer.parseInt(machineID_CompanyField.getText()));
-        part.setDate(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+        part.setDate(ZonedDateTime.now(Clock.systemUTC()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
         return part;
 
     }

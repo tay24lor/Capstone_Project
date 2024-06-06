@@ -1,7 +1,7 @@
 package com.example.software_1_project;
 
 import Database.PartDAO;
-import Database.SQLite;
+import Database.ProductDAO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -23,6 +23,9 @@ import model.Product;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.Clock;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -30,7 +33,7 @@ import java.util.ResourceBundle;
 public class ModifyProductScreenController implements Initializable {
 
     /** The modified product. */
-    private final Product NEWPRODUCT = new Product(0,"",0.00,0,0,0);
+    private final Product NEWPRODUCT = new Product(0,"",0.00,0,0,0, ZonedDateTime.now(Clock.systemUTC()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
 
     /** The product to be modified. */
     private static Product oldProd;
@@ -107,6 +110,9 @@ public class ModifyProductScreenController implements Initializable {
 
     private ObservableList<Part> assocParts = FXCollections.observableArrayList();
 
+    protected int x = 1016;
+    protected int y = 639;
+
 
     /** This method is used to send the selected product object from the main screen to the Modify Product screen. */
     public static void sendProdData(Product selectedItem) {
@@ -116,13 +122,6 @@ public class ModifyProductScreenController implements Initializable {
     /** This initializes the Modify Product fields with the selected product's data. */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        /*try {
-            SQLite.conn.setAutoCommit(false);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }*/
-        /*parts.setAll(PartDAO.getParts());
-        asscParts.setAll(PartDAO.getAsscParts(oldProd));*/
         modProdIDField.setText(String.valueOf(oldProd.getId()));
         modProdNameField.setText(oldProd.getName());
         modProdStockField.setText(String.valueOf(oldProd.getStock()));
@@ -149,26 +148,19 @@ public class ModifyProductScreenController implements Initializable {
         modProdPartTable.getItems().clear();
         modProdPartTable.setItems(parts);
 
-        /*for (Part part : parts) {
-            if (part.getProdID() == oldProd.getId()) {
-                asscParts.add(part);
-            }
-            System.out.println(part.getProdID());
-
-        }*/
         modAscPartTable.getItems().clear();
         assocParts = PartDAO.getAsscParts(oldProd);
         modAscPartTable.setItems(assocParts);
     }
 
     /** Cancels product modification. */
-    public void onClick2Cancel(ActionEvent actionEvent) throws IOException, SQLException {
+    public void onClick2Cancel(ActionEvent actionEvent) throws IOException {
         parts.clear();
         assocParts.clear();
         modAscPartTable.getItems().clear();
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
         Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
-        Scene scene = new Scene(root, 883, 400);
+        Scene scene = new Scene(root, x, y);
         stage.setTitle("Main Screen");
         stage.setScene(scene);
         stage.show();
@@ -184,12 +176,13 @@ public class ModifyProductScreenController implements Initializable {
             NEWPRODUCT.setMax(Integer.parseInt(modProdMaxField.getText()));
             NEWPRODUCT.setMin(Integer.parseInt(modProdMinField.getText()));
 
+            ProductDAO.update(NEWPRODUCT);
             for (Part part : assocParts) {
                 PartDAO.updateProdId(part, NEWPRODUCT.getId());
             }
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root, 883, 400);
+            Scene scene = new Scene(root, x, y);
             stage.setTitle("Main Screen");
             stage.setScene(scene);
             stage.show();

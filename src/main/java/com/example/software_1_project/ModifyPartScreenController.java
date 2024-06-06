@@ -1,7 +1,6 @@
 package com.example.software_1_project;
 
 import Database.PartDAO;
-import Database.SQLite;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -40,14 +39,11 @@ public class ModifyPartScreenController implements Initializable {
     public Alert alert = new Alert(Alert.AlertType.NONE);
     public Button modPartSaveButton;
 
+    protected int x = 1016;
+    protected int y = 639;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
-        /*try {
-            SQLite.conn.setAutoCommit(false);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }*/
 
         if (modPart.getClass().equals(InHousePart.class))
             inHouseButton.fire();
@@ -71,14 +67,14 @@ public class ModifyPartScreenController implements Initializable {
     public static void sendPartData(Part selectedItem) {
         modPart = selectedItem;
     }
-    public void onClick2Exit(ActionEvent actionEvent) throws IOException, SQLException {
+
+    public void onClick2Exit(ActionEvent actionEvent) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
         Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
-        Scene scene = new Scene(root, 883, 400);
+        Scene scene = new Scene(root, x, y);
         stage.setTitle("Main Screen");
         stage.setScene(scene);
         stage.show();
-        //SQLite.conn.rollback();
     }
     public void onClick2OutSrc() {
         outsourcedButton.setSelected(true);
@@ -102,10 +98,9 @@ public class ModifyPartScreenController implements Initializable {
                 part = setOSStats();
                 PartDAO.update(part, 0, machineID_CompanyField.getText(), -1);
             }
-            //SQLite.conn.commit();
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root, 883, 400);
+            Scene scene = new Scene(root, x, y);
             stage.setTitle("Main Screen");
             stage.setScene(scene);
             stage.show();
