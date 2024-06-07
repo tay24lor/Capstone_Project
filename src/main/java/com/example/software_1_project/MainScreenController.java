@@ -14,16 +14,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import model.*;
+import model.InHousePart;
+import model.OutSourcedPart;
+import model.Part;
+import model.Product;
 
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.sql.Time;
-import java.time.Clock;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -45,6 +43,7 @@ public class MainScreenController implements Initializable {
     public Button prodSearchButton;
     public Button deleteButton;
     public Button sampleButton;
+    public Button createAcctButton;
     Alert alert = new Alert(Alert.AlertType.NONE);
 
     /**
@@ -58,6 +57,15 @@ public class MainScreenController implements Initializable {
         generatePartTable();
         generateProductTable();
         System.out.println(PartDAO.getParts().size());
+
+        if (LoginScreenController.adminStatus()) {
+            System.out.println("Admin");
+            createAcctButton.setDisable(false);
+        }
+        else {
+            System.out.println("Standard");
+            createAcctButton.setDisable(true);
+        }
     }
 
     /**
@@ -75,7 +83,6 @@ public class MainScreenController implements Initializable {
         priceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
 
         partTable.setItems(PartDAO.getParts());
-        System.out.println(PartDAO.getParts().get(0).getDate());
     }
 
     /**
@@ -311,11 +318,16 @@ public class MainScreenController implements Initializable {
      */
     @FXML
     protected void onExitButtonClick(ActionEvent actionEvent) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("loginScreen.fxml")));
-        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        Scene scene = new Scene(root, 600, 400);
-        stage.setScene(scene);
-        stage.show();
+        alert.setAlertType(Alert.AlertType.CONFIRMATION);
+        alert.setContentText("Are you sure you want to exit?");
+        alert.showAndWait();
+        if (alert.getResult().equals(ButtonType.OK)) {
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("loginScreen.fxml")));
+            Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root, 600, 400);
+            stage.setScene(scene);
+            stage.show();
+        }
     }
 
     /**
@@ -349,8 +361,8 @@ public class MainScreenController implements Initializable {
             PartDAO.insert(part3, 0, part3.getCompanyName());
             PartDAO.insert(part4, 0, part4.getCompanyName());
 
-            Product prod1 = new Product(1, "Adult Bike", 200.00, 20, 1, 35, ZonedDateTime.now(Clock.systemUTC()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
-            Product prod2 = new Product(2, "Kid Bike", 100.00, 10, 1, 20, ZonedDateTime.now(Clock.systemUTC()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+            Product prod1 = new Product(1, "Adult Bike", 200.00, 20, 1, 35/*, ZonedDateTime.now(Clock.systemUTC()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))*/);
+            Product prod2 = new Product(2, "Kid Bike", 100.00, 10, 1, 20/*, ZonedDateTime.now(Clock.systemUTC()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))*/);
 
             ProductDAO.insert(prod1);
             ProductDAO.insert(prod2);
@@ -363,5 +375,13 @@ public class MainScreenController implements Initializable {
             alert.setContentText("Tables must be empty.");
             alert.showAndWait();
         }
+    }
+
+    public void onClick2CreateAcct(ActionEvent actionEvent) throws IOException {
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("createAcctScreen.fxml")));
+        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root, 740, 580);
+        stage.setScene(scene);
+        stage.show();
     }
 }

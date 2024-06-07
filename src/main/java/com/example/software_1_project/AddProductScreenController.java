@@ -16,22 +16,18 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Border;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
-import model.Inventory;
 import model.Part;
 import model.Product;
 
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.time.Clock;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class AddProductScreenController implements Initializable {
 
-    private final Product product = new Product(ProductDAO.getLatestId(), "", 0.00, 0, 0, 0, ZonedDateTime.now(Clock.systemUTC()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+    private final Product product = new Product(ProductDAO.getLatestId(), "", 0.00, 0, 0, 0);
     public TableView<Part> prodPartTable;
     public TableColumn<Part, Integer> partIDCol;
     public TableColumn<Part, String> partNameCol;
@@ -61,8 +57,7 @@ public class AddProductScreenController implements Initializable {
     protected int x = 1016;
     protected int y = 639;
 
-    public AddProductScreenController() throws SQLException {
-    }
+    public AddProductScreenController() throws SQLException {}
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -182,8 +177,8 @@ public class AddProductScreenController implements Initializable {
 
 
             try {
-                partSearchList = Inventory.lookupPart(search);
-                Part p = Inventory.lookupPart(Integer.parseInt(search));
+                partSearchList = PartDAO.lookupPart(search);
+                Part p = PartDAO.lookupPart(Integer.parseInt(search));
                 if (!(p == null) && !(partSearchList.contains(p))) {
                     partSearchList.add(p);
                 }
@@ -197,7 +192,7 @@ public class AddProductScreenController implements Initializable {
             }
         }
         else {
-            prodPartTable.setItems(Inventory.getAllParts());
+            prodPartTable.setItems(PartDAO.getParts());
         }
     }
 

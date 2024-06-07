@@ -16,16 +16,12 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Border;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
-import model.Inventory;
 import model.Part;
 import model.Product;
 
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.time.Clock;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -33,7 +29,7 @@ import java.util.ResourceBundle;
 public class ModifyProductScreenController implements Initializable {
 
     /** The modified product. */
-    private final Product NEWPRODUCT = new Product(0,"",0.00,0,0,0, ZonedDateTime.now(Clock.systemUTC()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+    private final Product NEWPRODUCT = new Product(0,"",0.00,0,0,0/*, ZonedDateTime.now(Clock.systemUTC()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))*/);
 
     /** The product to be modified. */
     private static Product oldProd;
@@ -251,8 +247,8 @@ public class ModifyProductScreenController implements Initializable {
         if (!search.isEmpty()) {
 
             try {
-                partSearchList = Inventory.lookupPart(search);
-                Part p = Inventory.lookupPart(Integer.parseInt(search));
+                partSearchList = PartDAO.lookupPart(search);
+                Part p = PartDAO.lookupPart(Integer.parseInt(search));
                 if (!(p == null) && !(partSearchList.contains(p))) {
                     partSearchList.add(p);
                 }
@@ -266,7 +262,7 @@ public class ModifyProductScreenController implements Initializable {
             }
         }
         else {
-            modProdPartTable.setItems(Inventory.getAllParts());
+            modProdPartTable.setItems(PartDAO.getParts());
         }
     }
 

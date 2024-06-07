@@ -53,6 +53,18 @@ public class ReportsScreenController implements Initializable {
     public TableColumn<Product, Integer> repProdStockCol;
     public TableColumn<Product, Double> repProdCostCol;
     public TableColumn<Product, String> repProdDateCol;
+    public TableView<Product> prodWthPartsTable;
+    public TableColumn<Product, Integer> hasPartProdIdCol;
+    public TableColumn<Product, String> hasPartProdNameCol;
+    public TableColumn<Product, Integer> hasPartProdStockCol;
+    public TableColumn<Product, Double> hasPartProdCostCol;
+    public TableColumn<Product, String> hasPartProdDateCol;
+    public TableView<Product> prodNoPartsTable;
+    public TableColumn<Product, Integer> noPartsIdCol;
+    public TableColumn<Product, String> noPartsNameCol;
+    public TableColumn<Product, Integer> noPartsStockCol;
+    public TableColumn<Product, Double> noPartsPriceCol;
+    public TableColumn<Product, String> noPartsDateCol;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -150,5 +162,33 @@ public class ReportsScreenController implements Initializable {
             default:
                 throw new IllegalStateException("Unexpected value: " + option);
         }
+    }
+
+    public void fillProdWthPartsTable() {
+        ObservableList<Product> prodsWithParts;
+        prodWthPartsTable.getItems().clear();
+        prodsWithParts = ProductDAO.getProdsWithOrWithoutParts(true);
+
+        hasPartProdIdCol.setCellValueFactory(new PropertyValueFactory<>("id"));
+        hasPartProdNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+        hasPartProdStockCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
+        hasPartProdCostCol.setCellValueFactory(new PropertyValueFactory<>("price"));
+        hasPartProdDateCol.setCellValueFactory(new PropertyValueFactory<>("date"));
+
+        prodWthPartsTable.setItems(prodsWithParts);
+    }
+
+    public void fillProdNoPartsTable() {
+        ObservableList<Product> prodsNoParts;
+        prodNoPartsTable.getItems().clear();
+        prodsNoParts = ProductDAO.getProdsWithOrWithoutParts(false);
+
+        noPartsIdCol.setCellValueFactory(new PropertyValueFactory<>("id"));
+        noPartsNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+        noPartsStockCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
+        noPartsPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
+        noPartsDateCol.setCellValueFactory(new PropertyValueFactory<>("date"));
+
+        prodNoPartsTable.setItems(prodsNoParts);
     }
 }

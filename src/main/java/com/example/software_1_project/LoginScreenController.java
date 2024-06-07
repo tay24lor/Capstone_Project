@@ -23,6 +23,7 @@ public class LoginScreenController {
     public TextField userField;
     public PasswordField passField;
     public Button closeButton;
+    private static boolean isAdmin = false;
 
     Alert alert = new Alert(Alert.AlertType.NONE);
 
@@ -31,9 +32,15 @@ public class LoginScreenController {
         String pass = passField.getText();
 
         if (UserDAO.check(name, pass)) {
-            writeToLog("SUCCESS");
+            if (Objects.equals(name, "admin")) {
+                isAdmin = true;
+                writeToLog("SUCCESS");
+            }
+            else {
+                isAdmin = false;
+            }
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
-            Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
+            Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
             Scene scene = new Scene(root, 1016, 639);
             stage.setTitle("Main Screen");
             stage.setScene(scene);
@@ -71,4 +78,6 @@ public class LoginScreenController {
             throw new RuntimeException(e);
         }
     }
+
+    public static boolean adminStatus() { return isAdmin; }
 }

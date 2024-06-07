@@ -61,30 +61,30 @@
                     <TableColumn fx:id="repProdIdCol" prefWidth="75.0" text="Product ID" />
                     <TableColumn fx:id="repProdNameCol" prefWidth="75.0" text="Name" />
                     <TableColumn fx:id="repProdStockCol" prefWidth="75.0" text="Stock" />
-                    <TableColumn fx:id="repProdCostCol" prefWidth="75.0" text="Cost" />
+                    <TableColumn fx:id="repProdCostCol" prefWidth="75.0" text="Price" />
                     <TableColumn fx:id="repProdDateCol" prefWidth="86.0" text="Date Created" />
                 </columns>
             </TableView>
         </Tab>
-        <Tab text="Has Parts">
-            <TableView prefHeight="200.0" prefWidth="200.0">
+        <Tab onSelectionChanged="#fillProdWthPartsTable" text="Has Parts">
+            <TableView fx:id="prodWthPartsTable" prefHeight="200.0" prefWidth="200.0">
                 <columns>
-                    <TableColumn prefWidth="75.0" text="Product ID" />
-                    <TableColumn prefWidth="75.0" text="Name" />
-                    <TableColumn prefWidth="75.0" text="Stock" />
-                    <TableColumn prefWidth="75.0" text="Cost" />
-                    <TableColumn prefWidth="82.0" text="Date Created" />
+                    <TableColumn fx:id="hasPartProdIdCol" prefWidth="75.0" text="Product ID" />
+                    <TableColumn fx:id="hasPartProdNameCol" prefWidth="75.0" text="Name" />
+                    <TableColumn fx:id="hasPartProdStockCol" prefWidth="75.0" text="Stock" />
+                    <TableColumn fx:id="hasPartProdCostCol" prefWidth="75.0" text="Price" />
+                    <TableColumn fx:id="hasPartProdDateCol" prefWidth="82.0" text="Date Created" />
                 </columns>
             </TableView>
         </Tab>
-        <Tab text="No Parts">
-            <TableView prefHeight="200.0" prefWidth="200.0">
+        <Tab onSelectionChanged="#fillProdNoPartsTable" text="No Parts">
+            <TableView fx:id="prodNoPartsTable" prefHeight="200.0" prefWidth="200.0">
                 <columns>
-                    <TableColumn prefWidth="75.0" text="Product ID" />
-                    <TableColumn prefWidth="75.0" text="Name" />
-                    <TableColumn prefWidth="75.0" text="Stock" />
-                    <TableColumn prefWidth="75.0" text="Cost" />
-                    <TableColumn prefWidth="85.0" text="Date Created" />
+                    <TableColumn fx:id="noPartsIdCol" prefWidth="75.0" text="Product ID" />
+                    <TableColumn fx:id="noPartsNameCol" prefWidth="75.0" text="Name" />
+                    <TableColumn fx:id="noPartsStockCol" prefWidth="75.0" text="Stock" />
+                    <TableColumn fx:id="noPartsPriceCol" prefWidth="75.0" text="Price" />
+                    <TableColumn fx:id="noPartsDateCol" prefWidth="85.0" text="Date Created" />
                 </columns>
             </TableView>
         </Tab>

@@ -35,13 +35,31 @@ public class ProductDAO {
                 String dateCreated = result.getString("date_created");
 
                 if (products.size() != getProductsSize()) {
-                    Product product = new Product(id, name, price, stock, min, max, dateCreated);
+                    Product product = new Product(id, name, price, stock, min, max);
+                    product.setDate(dateCreated);
                     products.add(product);
                 }
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static ObservableList<Product> getProdsWithOrWithoutParts(boolean choice) {
+        ObservableList<Product> products = FXCollections.observableArrayList();
+        if (choice) {
+            for (Product product : getProducts()) {
+                if (!PartDAO.getAsscParts(product).isEmpty())
+                    products.add(product);
+            }
+        }
+        else {
+            for (Product product : getProducts()) {
+                if (PartDAO.getAsscParts(product).isEmpty())
+                    products.add(product);
+            }
+        }
+        return products;
     }
     public static ObservableList<Product> getProducts() { return products; }
 

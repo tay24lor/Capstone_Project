@@ -1,22 +1,9 @@
 package model;
 
-import Database.PartDAO;
-import Database.ProductDAO;
-import javafx.beans.property.StringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
-import java.sql.SQLException;
-import java.util.List;
-
-
 /** Product class.
  * @author Taylor Aubrey
  */
 public class Product {
-    //private final ObservableList<Part> associatedParts = FXCollections.observableArrayList();
-
-
     private int id;
     private String name;
     private Double price;
@@ -34,14 +21,13 @@ public class Product {
      * @param min minimum to set.
      * @param max maximum to set.
      */
-    public Product(int id, String name, Double price, int stock, int min, int max, String dateTime) {
+    public Product(int id, String name, Double price, int stock, int min, int max) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.stock = stock;
         this.min = min;
         this.max = max;
-        this.dateTime = dateTime;
     }
 
     /**
@@ -140,31 +126,7 @@ public class Product {
         return max;
     }
 
-    /**
-     *
-     * @param part the part to associate with the product.
-     */
-    public void addAssociatePart(Part part) throws SQLException {
-        PartDAO.updateProdId(part, this.getId());
-
-    }
-
-    /**
-     *
-     * @param part the part to remove from product.
-     */
-    public void deleteAssociatedPart(Part part) throws SQLException {
-        PartDAO.updateProdId(part, 0);
-    }
-
-    /**
-     *
-     * @return the product's associated parts list.
-     */
-    public ObservableList<Part> getAllAssociatedParts() throws SQLException {
-        return PartDAO.getAsscParts(this);
-    }
-    public String getDate() { return dateTime; }
+    //public String getDate() { return dateTime; }
 
     public void setDate(String dateTime) {
         this.dateTime = String.valueOf(dateTime);
