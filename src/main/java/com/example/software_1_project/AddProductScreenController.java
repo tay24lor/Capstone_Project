@@ -27,7 +27,6 @@ import java.util.ResourceBundle;
 
 public class AddProductScreenController implements Initializable {
 
-    private final Product product = new Product(ProductDAO.getLatestId(), "", 0.00, 0, 0, 0);
     public TableView<Part> prodPartTable;
     public TableColumn<Part, Integer> partIDCol;
     public TableColumn<Part, String> partNameCol;
@@ -46,22 +45,27 @@ public class AddProductScreenController implements Initializable {
     public TextField prodMinField;
     public TextField addProdPartSearch;
     public Button prodPartSearchButton;
-    public Alert alert = new Alert(Alert.AlertType.NONE);
+    public Alert alert;
     public Button addProdSaveButton;
     public Label noPartToAddLabel;
     public Label noPartToRemoveLabel;
     public ObservableList<Part> partSearchList;
+
+    private Product product = null;
     private final ObservableList<Part> assocParts = FXCollections.observableArrayList();
     private final ObservableList<Part> parts = FXCollections.observableArrayList();
 
     protected int x = 1016;
     protected int y = 639;
 
-    public AddProductScreenController() throws SQLException {}
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
+        try {
+            product = new Product(ProductDAO.getLatestId(), "", 0.00, 0, 0, 0);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         parts.addAll(PartDAO.getParts());
         System.out.println("Prod ID: " + product.getId());
         if (!(parts.isEmpty())) {
@@ -93,11 +97,16 @@ public class AddProductScreenController implements Initializable {
     }
 
     public void onClick2Save(ActionEvent actionEvent) throws IOException, SQLException {
-        if (validateFields()) {
+        String price = prodPriceField.getText();
+        String stock = prodStockField.getText();
+        String max = prodMaxField.getText();
+        String min = prodMinField.getText();
+
+        if (validateFields(price, stock, max, min)) {
             product.setId(ProductDAO.getLatestId());
-            product.setName(prodNameField.getText()); product.setStock(Integer.parseInt(prodStockField.getText()));
-            product.setPrice(Double.parseDouble(prodPriceField.getText())); product.setMax(Integer.parseInt(prodMaxField.getText()));
-            product.setMin(Integer.parseInt(prodMinField.getText()));
+            product.setName(prodNameField.getText()); product.setStock(Integer.parseInt(stock));
+            product.setPrice(Double.parseDouble(price)); product.setMax(Integer.parseInt(max));
+            product.setMin(Integer.parseInt(min));
 
             for (Part part : assocParts) {
                 PartDAO.updateProdId(part, product.getId());
@@ -207,48 +216,54 @@ public class AddProductScreenController implements Initializable {
         addProdPartSearch.clear();
         prodPartSearchButton.setOnAction(a -> displayProdPartSearch());
     }
-    private boolean validateFields() {
+    public boolean validateFields(String price, String stock, String max, String min) {
+
         try {
-            Double.parseDouble(prodPriceField.getText());
+            Double.parseDouble(price);
         } catch (NumberFormatException ex) {
-            alert.setContentText("****** Price must be a decimal number ******");
-            prodPriceField.setBorder(Border.stroke(Paint.valueOf("red")));
-            return false;
-        }
-        try {
-            Integer.parseInt(prodStockField.getText());
-        } catch (NumberFormatException ex) {
-            alert.setContentText("****** Inventory must be a whole number ******");
-            prodStockField.setBorder(Border.stroke(Paint.valueOf("red")));
+            //alert.setContentText("****** Price must be a decimal number ******");
+            //prodPriceField.setBorder(Border.stroke(Paint.valueOf("red")));
             return false;
         }
         try {
-            Integer.parseInt(prodMaxField.getText());
+            Integer.parseInt(stock);
         } catch (NumberFormatException ex) {
-            alert.setContentText("****** Maximum field must be a whole number ******");
-            prodMaxField.setBorder(Border.stroke(Paint.valueOf("red")));
+            //alert.setContentText("****** Inventory must be a whole number ******");
+            //prodStockField.setBorder(Border.stroke(Paint.valueOf("red")));
             return false;
         }
         try {
-            Integer.parseInt(prodMinField.getText());
+            Integer.parseInt(max);
         } catch (NumberFormatException ex) {
-            alert.setContentText("****** Minimum field must be a whole number ******");
-            prodMinField.setBorder(Border.stroke(Paint.valueOf("red")));
+            //alert.setContentText("****** Maximum field must be a whole number ******");
+            //prodMaxField.setBorder(Border.stroke(Paint.valueOf("red")));
             return false;
         }
-        if (Integer.parseInt(prodMaxField.getText()) < Integer.parseInt(prodMinField.getText())) {
-            prodMaxField.setBorder(Border.stroke(Paint.valueOf("red")));
-            alert.setContentText("****** Maximum is lower than minumum ******");
+        try {
+            Integer.parseInt(min);
+        } catch (NumberFormatException ex) {
+            //alert.setContentText("****** Minimum field must be a whole number ******");
+            //prodMinField.setBorder(Border.stroke(Paint.valueOf("red")));
             return false;
         }
-        if (Integer.parseInt(prodStockField.getText()) > Integer.parseInt(prodMaxField.getText()) ||
-                Integer.parseInt(prodStockField.getText()) < Integer.parseInt(prodMinField.getText())) {
-            prodStockField.setBorder(Border.stroke(Paint.valueOf("red")));
-            alert.setContentText("****** Inventory is outside the max/min range ******");
+        if (Integer.parseInt(max) < Integer.parseInt(min)) {
+            //alert.setContentText("****** Maximum is lower than minumum ******");
+            //prodMaxField.setBorder(Border.stroke(Paint.valueOf("red")));
+            return false;
+        }
+        return validateStockCount(stock, max, min);
+    }
+
+    private static boolean validateStockCount(String stock, String max, String min) {
+        if (Integer.parseInt(stock) > Integer.parseInt(max) ||
+                Integer.parseInt(stock) < Integer.parseInt(min)) {
+            //alert.setContentText("****** Inventory is outside the max/min range ******");
+            //prodStockField.setBorder(Border.stroke(Paint.valueOf("red")));
             return false;
         }
         return true;
     }
+
     public void sendExceptionWarning() {
         EventHandler<ActionEvent> fieldWarning = actionEvent -> {
             alert.setAlertType(Alert.AlertType.WARNING);

@@ -64,7 +64,7 @@
            <Font name="System Bold" size="12.0" />
         </font>
     </Button>
-   <Button layoutX="885.0" layoutY="177.0" mnemonicParsing="false" onAction="#onClick2ViewReports" prefHeight="56.0" prefWidth="109.0" text="Reports" />
+   <Button layoutX="888.0" layoutY="177.0" mnemonicParsing="false" onAction="#onClick2ViewReports" prefHeight="56.0" prefWidth="109.0" text="Reports" />
    <Button fx:id="sampleButton" layoutX="887.0" layoutY="91.0" mnemonicParsing="false" onAction="#loadSamples" prefHeight="68.0" prefWidth="109.0" text="Add Sample Data" />
    <Label layoutX="895.0" layoutY="317.0" text="Admin Tools">
       <font>
@@ -72,4 +72,5 @@
       </font>
    </Label>
    <Button fx:id="createAcctButton" layoutX="882.0" layoutY="360.0" mnemonicParsing="false" onAction="#onClick2CreateAcct" text="Create User Account" />
+   <Button fx:id="viewDeleteAcctButton" layoutX="878.0" layoutY="409.0" mnemonicParsing="false" onAction="#onClick2ViewDeleteAccts" text="View/Delete Accounts" />
 </AnchorPane>

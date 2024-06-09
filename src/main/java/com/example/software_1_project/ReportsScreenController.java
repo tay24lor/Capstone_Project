@@ -25,6 +25,8 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class ReportsScreenController implements Initializable {
+    public ComboBox<String> repComboBox = new ComboBox<>();
+
     public TableView<Part> reportsAllPartsTable = new TableView<>();
     public TableColumn<Part, Integer> repAllPartsIdCol;
     public TableColumn<Part, String> repAllPartsNameCol;
@@ -44,27 +46,30 @@ public class ReportsScreenController implements Initializable {
     public TableColumn<Part, Integer> repOutSourceStockCol;
     public TableColumn<Part, String> repCompNameCol;
     public TableColumn<Part, String> repOutSourceDateCol;
-    public ComboBox<String> repComboBox = new ComboBox<>();
-    public TabPane partsTabPane;
-    public TabPane prodTabPane;
+
     public TableView<Product> repAllProdTable;
     public TableColumn<Product, Integer> repProdIdCol;
     public TableColumn<Product, String> repProdNameCol;
     public TableColumn<Product, Integer> repProdStockCol;
     public TableColumn<Product, Double> repProdCostCol;
     public TableColumn<Product, String> repProdDateCol;
+
     public TableView<Product> prodWthPartsTable;
     public TableColumn<Product, Integer> hasPartProdIdCol;
     public TableColumn<Product, String> hasPartProdNameCol;
     public TableColumn<Product, Integer> hasPartProdStockCol;
     public TableColumn<Product, Double> hasPartProdCostCol;
     public TableColumn<Product, String> hasPartProdDateCol;
+
     public TableView<Product> prodNoPartsTable;
     public TableColumn<Product, Integer> noPartsIdCol;
     public TableColumn<Product, String> noPartsNameCol;
     public TableColumn<Product, Integer> noPartsStockCol;
     public TableColumn<Product, Double> noPartsPriceCol;
     public TableColumn<Product, String> noPartsDateCol;
+
+    public TabPane partsTabPane;
+    public TabPane prodTabPane;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {

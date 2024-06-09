@@ -26,24 +26,27 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class MainScreenController implements Initializable {
-    public TableView<Part> partTable = new TableView<>();
     public TextField partSearch;
+    public Button partSearchButton;
+    public TableView<Part> partTable = new TableView<>();
     public TableColumn<Part, Integer> partIDCol;
     public TableColumn<Part, String> partNameCol;
     public TableColumn<Part, Integer> invLevelCol;
     public TableColumn<Part, Double> priceCol;
+
+    public TextField productSearch;
+    public Button prodSearchButton;
     public TableView<Product> prodTable = new TableView<>();
     public TableColumn<Product, Integer> prodIDCol;
     public TableColumn<Product, String> prodNameCol;
     public TableColumn<Product, Integer> prodInvCol;
     public TableColumn<Product, Double> prodCostCol;
+
     public Label warningLabel;
-    public Button partSearchButton;
-    public TextField productSearch;
-    public Button prodSearchButton;
     public Button deleteButton;
     public Button sampleButton;
     public Button createAcctButton;
+    public Button viewDeleteAcctButton;
     Alert alert = new Alert(Alert.AlertType.NONE);
 
     /**
@@ -56,15 +59,14 @@ public class MainScreenController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         generatePartTable();
         generateProductTable();
-        System.out.println(PartDAO.getParts().size());
 
         if (LoginScreenController.adminStatus()) {
-            System.out.println("Admin");
             createAcctButton.setDisable(false);
+            viewDeleteAcctButton.setDisable(false);
         }
         else {
-            System.out.println("Standard");
             createAcctButton.setDisable(true);
+            viewDeleteAcctButton.setDisable(true);
         }
     }
 
@@ -75,8 +77,6 @@ public class MainScreenController implements Initializable {
         partTable.getItems().clear();
         PartDAO.getParts().clear();
         PartDAO.setParts();
-        System.out.println("SIZE in main screen: " + PartDAO.getParts().size());
-
         partIDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         partNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         invLevelCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
@@ -361,8 +361,8 @@ public class MainScreenController implements Initializable {
             PartDAO.insert(part3, 0, part3.getCompanyName());
             PartDAO.insert(part4, 0, part4.getCompanyName());
 
-            Product prod1 = new Product(1, "Adult Bike", 200.00, 20, 1, 35/*, ZonedDateTime.now(Clock.systemUTC()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))*/);
-            Product prod2 = new Product(2, "Kid Bike", 100.00, 10, 1, 20/*, ZonedDateTime.now(Clock.systemUTC()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))*/);
+            Product prod1 = new Product(1, "Adult Bike", 200.00, 20, 1, 35);
+            Product prod2 = new Product(2, "Kid Bike", 100.00, 10, 1, 20);
 
             ProductDAO.insert(prod1);
             ProductDAO.insert(prod2);
@@ -380,7 +380,17 @@ public class MainScreenController implements Initializable {
     public void onClick2CreateAcct(ActionEvent actionEvent) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("createAcctScreen.fxml")));
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        Scene scene = new Scene(root, 740, 580);
+        Scene scene = new Scene(root, 600, 400);
+        stage.setTitle("Create Account");
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public void onClick2ViewDeleteAccts(ActionEvent actionEvent) throws IOException {
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("viewDeleteAcctScreen.fxml")));
+        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root, 530, 530);
+        stage.setTitle("Manage Accounts");
         stage.setScene(scene);
         stage.show();
     }

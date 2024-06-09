@@ -23,12 +23,12 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class ModifyPartScreenController implements Initializable {
+    public static InHousePart iHmodPart;
+    public static OutSourcedPart oSmodPart;
+
     public RadioButton inHouseButton;
     public RadioButton outsourcedButton;
     public Label makeIDLabel;
-    public static InHousePart iHmodPart;
-    public static OutSourcedPart oSmodPart;
-    private static Part modPart;
     public TextField partID;
     public TextField nameField;
     public TextField stockField;
@@ -38,6 +38,8 @@ public class ModifyPartScreenController implements Initializable {
     public TextField machineID_CompanyField;
     public Alert alert = new Alert(Alert.AlertType.NONE);
     public Button modPartSaveButton;
+
+    private static Part modPart;
 
     protected int x = 1016;
     protected int y = 639;

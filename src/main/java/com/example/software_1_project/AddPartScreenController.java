@@ -106,7 +106,7 @@ public class AddPartScreenController {
         return part;
     }
 
-    private boolean validateFields() {
+    public boolean validateFields() {
         try {
             Double.parseDouble(priceField.getText());
         } catch (NumberFormatException ex) {

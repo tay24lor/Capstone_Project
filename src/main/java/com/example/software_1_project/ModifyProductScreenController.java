@@ -28,12 +28,6 @@ import java.util.ResourceBundle;
 /** This class controls the Modify Product screen. */
 public class ModifyProductScreenController implements Initializable {
 
-    /** The modified product. */
-    private final Product NEWPRODUCT = new Product(0,"",0.00,0,0,0/*, ZonedDateTime.now(Clock.systemUTC()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))*/);
-
-    /** The product to be modified. */
-    private static Product oldProd;
-
     /** Product ID field. */
     public TextField modProdIDField;
 
@@ -102,6 +96,13 @@ public class ModifyProductScreenController implements Initializable {
 
     /** List for search results. */
     public ObservableList<Part> partSearchList = FXCollections.observableArrayList();
+    /** The modified product. */
+
+    private final Product NEWPRODUCT = new Product(0,"",0.00,0,0,0/*, ZonedDateTime.now(Clock.systemUTC()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))*/);
+
+    /** The product to be modified. */
+    private static Product oldProd;
+
     private ObservableList<Part> parts = FXCollections.observableArrayList();
 
     private ObservableList<Part> assocParts = FXCollections.observableArrayList();
