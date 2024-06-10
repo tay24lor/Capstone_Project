@@ -221,44 +221,44 @@ public class AddProductScreenController implements Initializable {
         try {
             Double.parseDouble(price);
         } catch (NumberFormatException ex) {
-            //alert.setContentText("****** Price must be a decimal number ******");
-            //prodPriceField.setBorder(Border.stroke(Paint.valueOf("red")));
+            alert.setContentText("****** Price must be a decimal number ******");
+            prodPriceField.setBorder(Border.stroke(Paint.valueOf("red")));
             return false;
         }
         try {
             Integer.parseInt(stock);
         } catch (NumberFormatException ex) {
-            //alert.setContentText("****** Inventory must be a whole number ******");
-            //prodStockField.setBorder(Border.stroke(Paint.valueOf("red")));
+            alert.setContentText("****** Inventory must be a whole number ******");
+            prodStockField.setBorder(Border.stroke(Paint.valueOf("red")));
             return false;
         }
         try {
             Integer.parseInt(max);
         } catch (NumberFormatException ex) {
-            //alert.setContentText("****** Maximum field must be a whole number ******");
-            //prodMaxField.setBorder(Border.stroke(Paint.valueOf("red")));
+            alert.setContentText("****** Maximum field must be a whole number ******");
+            prodMaxField.setBorder(Border.stroke(Paint.valueOf("red")));
             return false;
         }
         try {
             Integer.parseInt(min);
         } catch (NumberFormatException ex) {
-            //alert.setContentText("****** Minimum field must be a whole number ******");
-            //prodMinField.setBorder(Border.stroke(Paint.valueOf("red")));
+            alert.setContentText("****** Minimum field must be a whole number ******");
+            prodMinField.setBorder(Border.stroke(Paint.valueOf("red")));
             return false;
         }
         if (Integer.parseInt(max) < Integer.parseInt(min)) {
-            //alert.setContentText("****** Maximum is lower than minumum ******");
-            //prodMaxField.setBorder(Border.stroke(Paint.valueOf("red")));
+            alert.setContentText("****** Maximum is lower than minumum ******");
+            prodMaxField.setBorder(Border.stroke(Paint.valueOf("red")));
             return false;
         }
         return validateStockCount(stock, max, min);
     }
 
-    private static boolean validateStockCount(String stock, String max, String min) {
+    public boolean validateStockCount(String stock, String max, String min) {
         if (Integer.parseInt(stock) > Integer.parseInt(max) ||
                 Integer.parseInt(stock) < Integer.parseInt(min)) {
-            //alert.setContentText("****** Inventory is outside the max/min range ******");
-            //prodStockField.setBorder(Border.stroke(Paint.valueOf("red")));
+            alert.setContentText("****** Inventory is outside the max/min range ******");
+            prodStockField.setBorder(Border.stroke(Paint.valueOf("red")));
             return false;
         }
         return true;
@@ -274,7 +274,7 @@ public class AddProductScreenController implements Initializable {
         alert.setOnCloseRequest(e -> clearFields());
 
     }
-    private void clearFields() {
+    public void clearFields() {
         prodNameField.setBorder(Border.EMPTY);
         prodStockField.setBorder(Border.EMPTY);
         prodPriceField.setBorder(Border.EMPTY);

@@ -34,7 +34,7 @@ public class SQLite {
                 + " id INTEGER UNIQUE,"
                 + " name TEXT UNIQUE,"
                 + " password TEXT UNIQUE,"
-                + " PRIMARY KEY('id' AUTOINCREMENT)),";
+                + " PRIMARY KEY('id' AUTOINCREMENT))";
 
         statement.execute(createPartTable);
     }

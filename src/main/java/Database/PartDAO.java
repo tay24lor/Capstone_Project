@@ -60,6 +60,9 @@ public class PartDAO {
             throw new RuntimeException(e);
         }
     }
+    public static ObservableList<Part> returnAllParts() {
+        return parts;
+    }
 
 
     public static ObservableList<Part> getParts() {

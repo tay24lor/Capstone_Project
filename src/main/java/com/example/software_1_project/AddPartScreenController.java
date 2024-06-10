@@ -155,6 +155,11 @@ public class AddPartScreenController {
             alert.setContentText("****** Inventory is outside the max/min range ******");
             return false;
         }
+        if (nameField.getText().isEmpty()) {
+            nameField.setBorder(Border.stroke(Paint.valueOf("red")));
+            alert.setContentText("****** Name is required ******");
+            return false;
+        }
         return true;
     }
     public void sendWarning() {

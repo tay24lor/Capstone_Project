@@ -2,6 +2,7 @@ package com.example.software_1_project;
 
 import Database.PartDAO;
 import Database.ProductDAO;
+import Database.SQLite;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -107,6 +108,8 @@ public class ModifyProductScreenController implements Initializable {
 
     private ObservableList<Part> assocParts = FXCollections.observableArrayList();
 
+
+
     protected int x = 1016;
     protected int y = 639;
 
@@ -119,6 +122,12 @@ public class ModifyProductScreenController implements Initializable {
     /** This initializes the Modify Product fields with the selected product's data. */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        try {
+            SQLite.conn.setAutoCommit(false);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         modProdIDField.setText(String.valueOf(oldProd.getId()));
         modProdNameField.setText(oldProd.getName());
         modProdStockField.setText(String.valueOf(oldProd.getStock()));
@@ -155,6 +164,7 @@ public class ModifyProductScreenController implements Initializable {
         parts.clear();
         assocParts.clear();
         modAscPartTable.getItems().clear();
+
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
         Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
         Scene scene = new Scene(root, x, y);
@@ -177,6 +187,7 @@ public class ModifyProductScreenController implements Initializable {
             for (Part part : assocParts) {
                 PartDAO.updateProdId(part, NEWPRODUCT.getId());
             }
+            SQLite.conn.commit();
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
             Scene scene = new Scene(root, x, y);
@@ -212,6 +223,7 @@ public class ModifyProductScreenController implements Initializable {
 
     /** This method removes selected part association from the current product. */
     public void modProdRemovePart() throws SQLException {
+        SQLite.conn.setAutoCommit(false);
         noPartToRemoveLabel.setText("");
         alert.setAlertType(Alert.AlertType.CONFIRMATION);
         Part selectedPart = modAscPartTable.getSelectionModel().getSelectedItem();
