@@ -2,6 +2,7 @@ package com.example.software_1_project;
 
 import Database.PartDAO;
 import Database.ProductDAO;
+import Database.SQLite;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -57,6 +58,11 @@ public class MainScreenController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        try {
+            SQLite.setAutoCommitTrue();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         generatePartTable();
         generateProductTable();
 

@@ -23,6 +23,7 @@ import model.Product;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -99,16 +100,15 @@ public class ModifyProductScreenController implements Initializable {
     public ObservableList<Part> partSearchList = FXCollections.observableArrayList();
     /** The modified product. */
 
-    private final Product NEWPRODUCT = new Product(0,"",0.00,0,0,0/*, ZonedDateTime.now(Clock.systemUTC()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))*/);
+    private final Product NEWPRODUCT = new Product(0,"",0.00,0,0,0);
 
     /** The product to be modified. */
     private static Product oldProd;
 
     private ObservableList<Part> parts = FXCollections.observableArrayList();
-
     private ObservableList<Part> assocParts = FXCollections.observableArrayList();
-
-
+    private final ArrayList<Part> partsRemovedFromAssocList = new ArrayList<>();
+    private final ArrayList<Part> partsAddedToAssocList = new ArrayList<>();
 
     protected int x = 1016;
     protected int y = 639;
@@ -123,7 +123,7 @@ public class ModifyProductScreenController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
-            SQLite.conn.setAutoCommit(false);
+            SQLite.setAutoCommitFalse();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -145,11 +145,8 @@ public class ModifyProductScreenController implements Initializable {
         modAscPartStockCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
         modAscPartCostCol.setCellValueFactory(new PropertyValueFactory<>("price"));
 
-        System.out.println("SIZE in modprod 1: " + parts.size());
-
         parts.clear();
         parts = PartDAO.getParts();
-        System.out.println("SIZE in modprod 2: " + parts.size());
 
         modProdPartTable.getItems().clear();
         modProdPartTable.setItems(parts);
@@ -160,10 +157,13 @@ public class ModifyProductScreenController implements Initializable {
     }
 
     /** Cancels product modification. */
-    public void onClick2Cancel(ActionEvent actionEvent) throws IOException {
-        parts.clear();
-        assocParts.clear();
-        modAscPartTable.getItems().clear();
+    public void onClick2Cancel(ActionEvent actionEvent) throws IOException, SQLException {
+        for (Part part : partsRemovedFromAssocList) {
+            PartDAO.updateProdId(part, oldProd.getId());
+        }
+        for (Part part : partsAddedToAssocList) {
+            PartDAO.updateProdId(part, -1);
+        }
 
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainScreen.fxml")));
         Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
@@ -214,6 +214,7 @@ public class ModifyProductScreenController implements Initializable {
             noPartToAddLabel.setText("");
             assocParts.add(selectedPart);
             parts.remove(selectedPart);
+            partsAddedToAssocList.add(selectedPart);
             setTables();
         }
         else {
@@ -223,7 +224,6 @@ public class ModifyProductScreenController implements Initializable {
 
     /** This method removes selected part association from the current product. */
     public void modProdRemovePart() throws SQLException {
-        SQLite.conn.setAutoCommit(false);
         noPartToRemoveLabel.setText("");
         alert.setAlertType(Alert.AlertType.CONFIRMATION);
         Part selectedPart = modAscPartTable.getSelectionModel().getSelectedItem();
@@ -235,6 +235,7 @@ public class ModifyProductScreenController implements Initializable {
                 PartDAO.updateProdId(selectedPart, -1);
                 parts.add(selectedPart);
                 assocParts.remove(selectedPart);
+                partsRemovedFromAssocList.add(selectedPart);
                 setTables();
             }
             else {

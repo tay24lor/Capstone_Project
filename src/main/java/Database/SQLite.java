@@ -27,6 +27,12 @@ public class SQLite {
     public static void close() throws SQLException {
         conn.close();
     }
+    public static void setAutoCommitTrue() throws SQLException {
+        conn.setAutoCommit(true);
+    }
+    public static void setAutoCommitFalse() throws SQLException {
+        conn.setAutoCommit(false);
+    }
 
     private static void createUserTable() throws SQLException {
         Statement statement = conn.createStatement();

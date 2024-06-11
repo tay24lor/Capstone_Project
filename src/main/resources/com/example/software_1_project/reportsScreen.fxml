@@ -11,7 +11,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="580.0" prefWidth="740.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.software_1_project.ReportsScreenController">
+<AnchorPane prefHeight="580.0" prefWidth="740.0" xmlns="http://javafx.com/javafx/20.0.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.software_1_project.ReportsScreenController">
     <Label layoutX="332.0" layoutY="30.0" text="Reports">
         <font>
           <Font name="System Bold" size="18.0" />

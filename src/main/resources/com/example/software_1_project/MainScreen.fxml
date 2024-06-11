@@ -9,7 +9,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="639.0" prefWidth="1016.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.software_1_project.MainScreenController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="639.0" prefWidth="1016.0" xmlns="http://javafx.com/javafx/20.0.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.software_1_project.MainScreenController">
    <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#c2d3e4" height="199.0" layoutX="873.0" layoutY="295.0" opacity="0.61" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="143.0" />
     <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1f93ff11" height="533.0" layoutX="446.0" layoutY="89.0" stroke="BLACK" strokeType="INSIDE" width="427.0" />
     <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1f93ff11" height="533.0" layoutX="7.0" layoutY="89.0" stroke="BLACK" strokeType="INSIDE" width="427.0" />

@@ -9,7 +9,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="530.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.software_1_project.AddProductScreenController">
+<AnchorPane prefHeight="530.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/20.0.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.software_1_project.AddProductScreenController">
    <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ffffff72" height="502.0" layoutX="19.0" layoutY="13.0" stroke="BLACK" strokeType="INSIDE" width="866.0" />
    <Label layoutX="46.0" layoutY="43.0" text="Add Product">
       <font>
