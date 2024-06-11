@@ -202,7 +202,7 @@ public class PartDAO {
     }
 
     public static void insert(Part part, int machCode, String compName) throws SQLException {
-        String insertStmt = "INSERT INTO parts (id, name, price, stock, min, max, machineCode, companyName, productID, date_created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String insertStmt = "INSERT INTO parts (id, name, price, stock, min, max, machineCode, companyName, productID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement preparedStatement = SQLite.conn.prepareStatement(insertStmt);
         preparedStatement.setInt(1, part.getId());
         preparedStatement.setString(2, part.getName());
@@ -213,7 +213,6 @@ public class PartDAO {
         preparedStatement.setInt(7, machCode);
         preparedStatement.setString(8, compName);
         preparedStatement.setInt(9, part.getProdID());
-        preparedStatement.setString(10, part.getDate());
         preparedStatement.executeUpdate();
     }
 

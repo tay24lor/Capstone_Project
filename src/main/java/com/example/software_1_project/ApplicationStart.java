@@ -22,7 +22,7 @@ public class ApplicationStart extends Application {
             shutdown(primaryStage);
         });
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("loginScreen.fxml")));
-        primaryStage.setTitle("");
+        primaryStage.setTitle("Login");
         primaryStage.setScene(new Scene(root, 600, 400));
         primaryStage.show();
     }

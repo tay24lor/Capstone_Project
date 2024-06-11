@@ -1,7 +1,5 @@
 package model;
 
-import java.time.ZonedDateTime;
-
 /**
  *
  * @author Taylor Aubrey
@@ -17,7 +15,7 @@ public abstract class Part {
     private int max;
     private int prodID;
     private String dateTime;
-    public Part(int id, String name, double price, int stock, int min, int max, int prodID, String dateTime) {
+    public Part(int id, String name, double price, int stock, int min, int max, int prodID) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -25,7 +23,6 @@ public abstract class Part {
         this.min = min;
         this.max = max;
         this.prodID = prodID;
-        this.dateTime = dateTime;
     }
 
     /**

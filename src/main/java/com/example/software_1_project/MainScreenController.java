@@ -2,7 +2,6 @@ package com.example.software_1_project;
 
 import Database.PartDAO;
 import Database.ProductDAO;
-import Database.SQLite;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -58,10 +57,15 @@ public class MainScreenController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        try {
-            SQLite.setAutoCommitTrue();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+
+        for (Part part : PartDAO.returnAllParts()) {
+            if (part.getProdID() == 0) {
+                try {
+                    PartDAO.updateProdId(part, -1);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
         generatePartTable();
         generateProductTable();
@@ -351,10 +355,10 @@ public class MainScreenController implements Initializable {
 
     public void loadSamples() throws SQLException {
         if (PartDAO.getParts().isEmpty() && ProductDAO.getProducts().isEmpty()) {
-            InHousePart part1 = new InHousePart(1, "Pedals", 1.00, 1, 1, 20, 0);
-            InHousePart part2 = new InHousePart(2, "Chains", 1.00, 1, 1, 20, 0);
-            OutSourcedPart part3 = new OutSourcedPart(3, "Seats", 1.00, 1, 1, 20, 0);
-            OutSourcedPart part4 = new OutSourcedPart(4, "Handlebars", 1.00, 1, 1, 20, 0);
+            InHousePart part1 = new InHousePart(1, "Pedals", 1.00, 1, 1, 20, -1);
+            InHousePart part2 = new InHousePart(2, "Chains", 1.00, 1, 1, 20, -1);
+            OutSourcedPart part3 = new OutSourcedPart(3, "Seats", 1.00, 1, 1, 20, -1);
+            OutSourcedPart part4 = new OutSourcedPart(4, "Handlebars", 1.00, 1, 1, 20,-1);
 
             part1.setMachineCode(101);
             part2.setMachineCode(102);

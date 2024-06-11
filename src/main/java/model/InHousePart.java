@@ -16,7 +16,7 @@ public class InHousePart extends Part {
      * @param max maximum to set
      */
     public InHousePart(int id, String name, double price, int stock, int min, int max, int prodID) {
-        super(id, name, price, stock, min, max, prodID, "");
+        super(id, name, price, stock, min, max, prodID);
     }
 
     /**
